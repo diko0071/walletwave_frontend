@@ -46,7 +46,7 @@ export default function Login() {
   return (
     <div>
     <Card className="mx-auto max-w-sm">
-      <form onSubmit={submitLogin}>
+      <form action={submitLogin}>
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>

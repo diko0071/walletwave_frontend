@@ -65,7 +65,7 @@ export default function Signup() {
 
   return (
     <Card className="mx-auto max-w-sm">
-      <form onSubmit={submitSignup}>
+      <form action={submitSignup}>
       <CardHeader>
         <CardTitle className="text-xl">Sign Up</CardTitle>
         <CardDescription>
@@ -99,7 +99,7 @@ export default function Signup() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ))}
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full" onClick={submitSignup}>
             Create an account
           </Button>
           <Button variant="outline" className="w-full">
@@ -117,3 +117,4 @@ export default function Signup() {
     </Card>
   )
 }
+
