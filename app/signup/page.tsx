@@ -27,7 +27,7 @@ import ApiService from "../services/apiService"
 import { handleLogin } from "@/app/lib/actions";
 import { get } from "http"
 
-export function Signup() {
+export default function Signup() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -65,7 +65,7 @@ export function Signup() {
 
   return (
     <Card className="mx-auto max-w-sm">
-      <form action={submitSignup}>
+      <form onSubmit={submitSignup}>
       <CardHeader>
         <CardTitle className="text-xl">Sign Up</CardTitle>
         <CardDescription>
@@ -99,7 +99,7 @@ export function Signup() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ))}
-          <Button type="submit" className="w-full" onClick={submitSignup}>
+          <Button type="submit" className="w-full">
             Create an account
           </Button>
           <Button variant="outline" className="w-full">
@@ -117,6 +117,3 @@ export function Signup() {
     </Card>
   )
 }
-
-export default Signup;
-

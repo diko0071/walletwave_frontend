@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/alert"
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
 
-export function Login() {
+export default function Login() {
 
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -46,7 +46,7 @@ export function Login() {
   return (
     <div>
     <Card className="mx-auto max-w-sm">
-      <form action={submitLogin}>
+      <form onSubmit={submitLogin}>
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>
@@ -98,6 +98,3 @@ export function Login() {
     </div>
   )
 }
-
-export default Login;
-
