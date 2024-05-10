@@ -124,13 +124,13 @@ export const columns: ColumnDef<Transaction>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
+      const amount = parseFloat(row.getValue("amount"));
+      const currency = row.original.converted_currency; 
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
-        currency: "USD",
-      }).format(amount)
-
-      return <div className="flex justify-between">{formatted}</div>
+        currency: currency,
+      }).format(amount);
+      return <div className="flex justify-between">{formatted}</div>;
     },
   },
   {
@@ -153,7 +153,7 @@ export const columns: ColumnDef<Transaction>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("date")}</div>,
+    cell: ({ row }) => <div>{row.getValue("date")}</div>,
   },
   {
     id: "actions",
@@ -311,15 +311,15 @@ export function DataTable() {
 
   const handleDeleteClick = async (transaction: Transaction) => {
     try {
-      // Запрос к серверу для получения дополнительных данных о транзакции
+
       const transactionDetails = await ApiService.get(`/api/transactions/${transaction.id}`);
-      // Устанавливаем полученные данные транзакции в состояние
+
       setTransactionToDelete(transactionDetails);
-      // Открываем модальное окно только после успешного получения данных
+
       setIsAlertDialogOpen(true);
     } catch (error) {
       console.error('Failed to fetch transaction details:', error);
-      // Обработка ошибки, например, показ сообщения пользователю
+
     }
   };
 
@@ -338,7 +338,7 @@ export function DataTable() {
       date: item.created_at ? format(parseISO(item.created_at), 'MMMM d, yyyy') : 'No date provided',
       category: item.category,
       amount: item.converted_amount ? `${item.converted_amount} ${item.converted_currency}` : `${item.amount} ${item.transaction_currency}`,
-      converted_amount: item.amount,
+      converted_amount: item.converted_amount,
       converted_currency: item.converted_currency ? item.converted_currency : item.transaction_currency,
     }));
   }
@@ -384,9 +384,9 @@ const fetchTransaction = async (transactionId: string) => {
       description: response.description,
       date: format(parseISO(response.created_at), 'MMMM d, yyyy'),
       category: response.category,
-      amount: response.converted_amount ? `${response.converted_amount} ${response.converted_currency}` : `${response.amount} ${response.transaction_currency}`,
-      converted_amount: response.amount,
-      converted_currency: response.converted_currency ? response.converted_currency : response.transaction_currency,
+      amount: response.converted_amount,
+      converted_amount: response.converted_amount,
+      converted_currency: response.converted_currency,
     };
     setEditingTransaction(transaction);
     setIsEditSheetOpen(true);
@@ -400,7 +400,7 @@ const fetchTransaction = async (transactionId: string) => {
 const renderDeleteConfirmationDialog = () => (
   <AlertDialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
     <AlertDialogTrigger asChild>
-      <Button variant="outline" style={{ display: "none" }}>Показать диалог</Button>
+      <Button variant="outline" style={{ display: "none" }}>Open</Button>
     </AlertDialogTrigger>
     <AlertDialogContent>
       <AlertDialogHeader>
@@ -456,7 +456,7 @@ const renderDeleteConfirmationDialog = () => (
           </Label>
           <div className="col-span-3">
             <Select
-              value={editingTransaction.converted_currency || "Select a currency"} // Используйте currency для текущего значения
+              value={editingTransaction.converted_currency || "Select a currency"} 
               onValueChange={(value) => setEditingTransaction({ ...editingTransaction, converted_currency: value })}
             >
               <SelectTrigger className="w-full">
@@ -494,7 +494,7 @@ const renderDeleteConfirmationDialog = () => (
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-7 text-sm">
           <Label htmlFor="date" className="text-right">
             Date
           </Label>

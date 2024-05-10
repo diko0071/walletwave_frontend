@@ -36,6 +36,7 @@ export function DatePickerWithRange({
   };
 
   return (
+
     <div className={cn("grid gap-2", className)}>
       <Popover>
         <PopoverTrigger asChild>
@@ -68,7 +69,7 @@ export function DatePickerWithRange({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={handleSelectDate} // Используем handleSelectDate для обработки выбора даты
+            onSelect={handleSelectDate}
             numberOfMonths={2}
           />
         </PopoverContent>

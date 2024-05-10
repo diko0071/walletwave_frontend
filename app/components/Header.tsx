@@ -109,8 +109,10 @@ export default function Header() {
         description: inputValue,
         category: category,
         amount: amount,
-        currency: currency,
+        transaction_currency: currency,
       };
+      console.log("Sending request with currency:", currency);
+      console.log("Request body:", requestBody);
     
       setLoadingState(prevState => ({ ...prevState, secondButton: true }));
       setLoading(true);
@@ -150,6 +152,7 @@ export default function Header() {
       };
 
     const handleCurrencyChange = (value: string) => {
+        console.log("Selected currency:", value);
         setCurrency(value);
       };
 
