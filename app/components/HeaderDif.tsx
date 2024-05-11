@@ -6,8 +6,9 @@ import Header from "./Header";
 
 const HeaderDif = async () => {
     const userId = await getUserId();
+    const token = await getAccessToken();
 
-    if (!userId) {
+    if (!userId || !token) {
         return (
             <main className="max-w-[1500px] max-auto px-6 py-12">
             </main>

@@ -20,6 +20,8 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
+import { useEffect } from "react";
+import { getRefreshToken, handleRefresh } from "../lib/actions";
 
 export default function Login() {
 
@@ -27,6 +29,20 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string[]>([]);
+
+  useEffect(() => {
+    async function checkAndRefreshToken() {
+      const refreshToken = await getRefreshToken();
+      if (refreshToken) {
+        const newAccessToken = await handleRefresh();
+        if (newAccessToken) {
+          router.replace('/');
+        }
+      }
+    }
+
+    checkAndRefreshToken();
+  }, [router]);
 
   const submitLogin = async () => {
     const formData = {
@@ -70,9 +86,6 @@ export default function Login() {
           <div className="grid gap-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
-              <Link href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
-              </Link>
             </div>
             <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
@@ -86,12 +99,6 @@ export default function Login() {
           <Button type="submit" className="w-full">
             Login
           </Button>
-        </div>
-        <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="#" className="underline">
-            Sign up
-          </Link>
         </div>
       </CardContent>
       </form>

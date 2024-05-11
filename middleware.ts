@@ -1,9 +1,9 @@
-import { getUserId, getAccessToken } from './app/lib/actions'; 
+import { getUserId, getAccessToken, handleRefresh } from './app/lib/actions'; 
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
+
   const userId = await getUserId();
   const token = await getAccessToken();
 
@@ -17,11 +17,9 @@ export async function middleware(request: NextRequest) {
     const redirectUrl = new URL('/login', request.url);
     return NextResponse.redirect(redirectUrl);
   }
-
   return NextResponse.next();
 }
 
 export const config = {
   matcher: ['/login', '/signup', '/dashboard', '/profile', '/settings', '/'],
 };
-

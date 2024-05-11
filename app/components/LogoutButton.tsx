@@ -14,8 +14,9 @@ const LogoutButton = React.forwardRef((props, ref) => {
   const router = useRouter();
   
   const submitLogout = async () => {
-    resetAuthCookies();
-    router.push('/login');
+    resetAuthCookies().then(() => {
+      router.push('/login');
+    });
   };
 
   return (

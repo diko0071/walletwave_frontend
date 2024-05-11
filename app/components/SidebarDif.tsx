@@ -6,9 +6,11 @@ import Sidebar from './Sidebar';
 
 
 const SidebarDif = async () => {
+    
     const userId = await getUserId();
+    const token = await getAccessToken();
 
-    if (!userId) {
+    if (!userId || !token) {
         return (
             <div>
             </div>

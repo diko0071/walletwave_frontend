@@ -12,7 +12,7 @@ const RouteGuard = ({ children }: { children: ReactNode }) => {
             const userId = await getUserId();
             const token = await getAccessToken();
 
-            if (userId && token) {
+            if (userId || token) {
                 setAuthorized(true);
             } else {
                 setAuthorized(false);

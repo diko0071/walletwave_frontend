@@ -1,5 +1,6 @@
 'use server';
 
+import ApiService from "../services/apiService";
 import { cookies } from "next/headers";
 
 export async function handleLogin(userId: string, accessToken: string, refreshToken: string,) {
@@ -41,4 +42,34 @@ export async function getUserId() {
 export async function getAccessToken() {
   let accessToken = cookies().get('session_access_token')?.value;
   return accessToken ? accessToken : null;
+}
+
+export async function getRefreshToken() {
+  let refreshToken = cookies().get('session_refresh_token')?.value;
+  return refreshToken ? refreshToken : null;
+}
+
+export async function handleRefresh() {
+
+  const refreshToken = await getRefreshToken();
+
+  try {
+    const response = await ApiService.post('/api/auth/token/refresh/', JSON.stringify({ refresh: refreshToken }));
+    if (response.access) {
+      cookies().set('session_access_token', response.access, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 60 * 60,
+        path: '/'
+      });
+
+      return response.access;
+    } else {
+      resetAuthCookies();
+    }
+  } catch (error) {
+    resetAuthCookies();
+  }
+
+  return null;
 }

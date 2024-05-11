@@ -54,9 +54,9 @@ export default function Signup() {
 
     if (response.access) {
       
-      handleLogin(response.user.pk, response.access, response.refresh);
-
-      router.push('/');
+      handleLogin(response.user.pk, response.access, response.refresh).then(() => {
+        router.push('/');
+      });
     } else {
       const tmpError: string[] = Object.values(response).map((error: any) => error);
       setError(tmpError);
@@ -65,7 +65,7 @@ export default function Signup() {
 
   return (
     <Card className="mx-auto max-w-sm">
-      <form onSubmit={submitSignup}>
+      <form>
       <CardHeader>
         <CardTitle className="text-xl">Sign Up</CardTitle>
         <CardDescription>
@@ -102,13 +102,10 @@ export default function Signup() {
           <Button type="submit" className="w-full">
             Create an account
           </Button>
-          <Button variant="outline" className="w-full">
-            Sign up with GitHub
-          </Button>
         </div>
         <div className="mt-4 text-center text-sm">
           Already have an account?{" "}
-          <Link href="#" className="underline">
+          <Link href="/login" className="underline">
             Sign in
           </Link>
         </div>
