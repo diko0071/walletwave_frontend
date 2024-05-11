@@ -36,8 +36,9 @@ export default function Login() {
 
   const response = await ApiService.post('/api/auth/login/', JSON.stringify(formData));
   if (response.access) {
-    handleLogin(response.user.pk, response.access, response.refresh);
-    router.push('/');
+    handleLogin(response.user.pk, response.access, response.refresh).then(() => {
+      router.push('/');
+    });
   } else {
     setError(response.non_field_errors);
   }
