@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const protectedRoutes = ['/dashboard', '/profile', '/settings', '/']; 
-  if (protectedRoutes.includes(pathname) && !token && !userId) {
+  if (protectedRoutes.includes(pathname) && (!token || !userId)) {
     const redirectUrl = new URL('/login', request.url);
     return NextResponse.redirect(redirectUrl);
   }
