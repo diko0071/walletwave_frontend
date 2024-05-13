@@ -69,6 +69,10 @@ export default function Sidebar() {
     router.push("/");
   };
 
+  const navigateToSettings = () => {
+    router.push("/settings");
+  };
+
   return (
       <aside className="inset-y fixed  left-0 z-20 flex h-full flex-col border-r">
         <div className="border-b p-2">
@@ -135,7 +139,9 @@ export default function Sidebar() {
                 variant="ghost"
                 size="icon"
                 className="mt-auto rounded-lg"
-                aria-label="Settings">
+                aria-label="Settings"
+                onClick={navigateToSettings}
+              >
                 <Settings className="size-5" />
               </Button>
             </TooltipTrigger>

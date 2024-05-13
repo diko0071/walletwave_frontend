@@ -1,7 +1,7 @@
 'use client';
 import { CardTitle, CardHeader, CardContent, Card, CardDescription } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
+import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select, SelectGroup, SelectLabel } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button"
@@ -70,7 +70,7 @@ const transactions = [
   };
 
   
-  export default function ReccuringTransactions() {
+  export default function TransactionSettings() {
 
 
     const [currentTransactions, setCurrentTransactions] = useState(transactions);
@@ -190,15 +190,45 @@ const transactions = [
       );
   
     return (
-      <div className="grid grid-cols-1 gap-8">
-        <div className="col-span-1">
+      <div className="grid gap-10">
             {renderEditSheet()}
             {renderDeleteConfirmationDialog()}
-          <Card>
+            <Card x-chunk="transaction-settings-chunk-1">
+              <CardHeader>
+                <CardTitle>Default Currency</CardTitle>
+                <CardDescription>
+                  Select your preferred currency.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Currencies</SelectLabel>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="EUR">EUR</SelectItem>
+                      <SelectItem value="GBP">GBP</SelectItem>
+                      <SelectItem value="JPY">JPY</SelectItem>
+                      <SelectItem value="RUB">RUB</SelectItem>
+                      <SelectItem value="AED">AED</SelectItem>
+                      <SelectItem value="AUD">AUD</SelectItem>
+                      <SelectItem value="KZT">KZT</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <div className="flex justify-between mt-4">
+                    <Button>Save</Button>
+                </div>
+              </CardContent>
+            </Card>
+            <Card x-chunk="transaction-settings-chunk-2">
             <CardHeader>
               <CardTitle>Recurring Transactions</CardTitle>
               <CardDescription>
-                Used to identify your store in the marketplace.
+                Add recurring transactions, they will be added automatically in your transactions based on charge date.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -234,6 +264,5 @@ const transactions = [
             </CardContent>
           </Card>
         </div>
-      </div>
     );
   }

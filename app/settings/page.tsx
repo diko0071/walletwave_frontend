@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { CircleUser, Menu, Package2, Search } from "lucide-react"
 
-import ReccuringTransactions from "@/app/components/Settings/ReccuringTransactions"
+import ReccuringTransactions from "@/app/components/Settings/TransactionSettings"
 import UserSettings from "@/app/components/Settings/UserSettings"
 
 import { Button } from "@/components/ui/button"
@@ -28,13 +28,13 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useState } from "react";
 
 
-type Section = 'General' | 'Recurring Transactions';
+type Section = 'General' | 'Transactions';
 
 export default function Settings() {
-  // Состояние для отслеживания активного раздела
+
   const [activeSection, setActiveSection] = useState('General');
 
-  // Функция для изменения активного раздела
+
   const changeSection = (section: Section) => () => {
     setActiveSection(section);
   };
@@ -43,15 +43,15 @@ export default function Settings() {
     return activeSection === section ? 'font-semibold' : '';
   };
 
-  // Определение, какой компонент рендерить на основе активного раздела
+
   const renderSection = () => {
     switch (activeSection) {
       case 'General':
         return <UserSettings />;
-      case 'Recurring Transactions':
+      case 'Transactions':
         return <ReccuringTransactions />;
       default:
-        return null; // или компонент по умолчанию
+        return null; 
     }
   };
 
@@ -66,8 +66,8 @@ export default function Settings() {
           <button onClick={changeSection('General')} className={getButtonClass('General')}>
               General
             </button>
-            <button onClick={changeSection('Recurring Transactions')} className={getButtonClass('Recurring Transactions')}>
-              Recurring Transactions
+            <button onClick={changeSection('Transactions')} className={getButtonClass('Transactions')}>
+              Transactions
             </button>
           </nav>
           <div>

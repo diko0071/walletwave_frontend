@@ -46,37 +46,6 @@ export default function UserSettings() {
     </div>
   </CardContent>
 </Card>
-<Card x-chunk="user-settings-chunk-2">
-  <CardHeader>
-    <CardTitle>Default Currency</CardTitle>
-    <CardDescription>
-      Select your preferred currency.
-    </CardDescription>
-  </CardHeader>
-  <CardContent>
-    <Select>
-      <SelectTrigger>
-        <SelectValue placeholder="Select a currency" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Currencies</SelectLabel>
-          <SelectItem value="USD">USD</SelectItem>
-          <SelectItem value="EUR">EUR</SelectItem>
-          <SelectItem value="GBP">GBP</SelectItem>
-          <SelectItem value="JPY">JPY</SelectItem>
-          <SelectItem value="RUB">RUB</SelectItem>
-          <SelectItem value="AED">AED</SelectItem>
-          <SelectItem value="AUD">AUD</SelectItem>
-          <SelectItem value="KZT">KZT</SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-    <div className="flex justify-between mt-4">
-        <Button>Save</Button>
-    </div>
-  </CardContent>
-</Card>
 </div>
   )
 }
