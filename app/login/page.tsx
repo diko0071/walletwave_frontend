@@ -34,13 +34,18 @@ export default function Login() {
     async function checkAndRefreshToken() {
       const refreshToken = await getRefreshToken();
       if (refreshToken) {
-        const newAccessToken = await handleRefresh();
-        if (newAccessToken) {
-          router.replace('/');
-        }
+        handleRefresh()
+          .then(newAccessToken => {
+            if (newAccessToken) {
+              router.push('/');
+            }
+          })
+          .catch(error => {
+            console.error("Error refreshing token:", error);
+          });
       }
     }
-
+  
     checkAndRefreshToken();
   }, [router]);
 
