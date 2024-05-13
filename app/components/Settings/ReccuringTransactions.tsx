@@ -105,17 +105,18 @@ const transactions = [
     };
   
     const handleSaveTransaction = () => {
-        console.log("Saving changes for transaction:", editingTransaction);
-
-        setIsEditSheetOpen(false);
-        if (editingTransaction) {
-        toast(`${editingTransaction.name} has been successfully updated.`, {
-          action: {
-            label: "Close",
-            onClick: () => console.log("Notification closed"),
-          },
-        });
-      };
+      console.log("Saving changes for transaction:", editingTransaction);
+  
+      setIsEditSheetOpen(false);
+      if (editingTransaction) {
+          toast(`${editingTransaction.name} has been successfully updated.`, {
+              action: {
+                  label: "Close",
+                  onClick: () => console.log("Notification closed"),
+              },
+          });
+      } 
+    };
 
       const confirmDeleteTransaction = () => {
         if (deletingTransactionId !== null) {
@@ -236,4 +237,3 @@ const transactions = [
       </div>
     );
   }
-}

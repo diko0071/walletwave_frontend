@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 
-export default function Component() {
+export default function UserSettings() {
   return (
 <div className="grid gap-10">
 <Card x-chunk="user-settings-chunk-1">
