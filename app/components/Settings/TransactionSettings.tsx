@@ -67,11 +67,15 @@ const transactions = [
   type Transaction = {
     id: number;
     name: string;
+    category: string;
+    chargeDate: string;
+    amount: string;
+    currency: string;
+    frequency: string; 
   };
 
   
   export default function TransactionSettings() {
-
 
     const [currentTransactions, setCurrentTransactions] = useState(transactions);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -98,6 +102,68 @@ const transactions = [
 
     const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+
+    const [isNewTransactionOpen, setIsNewTransactionOpen] = useState(false);
+    const [newTransaction, setNewTransaction] = useState<Transaction>({
+      id: Date.now(),
+      name: '',
+      category: '',
+      chargeDate: '',
+      amount: '',
+      currency: 'USD',
+      frequency: 'Monthly' // Provide a default value or adjust based on your application's needs
+    });
+    
+
+    const handleCreateNewTransaction = () => {
+      setIsNewTransactionOpen(true);
+      // Initialize newTransaction with default/empty values, including frequency
+      setNewTransaction({
+        id: Date.now(),
+        name: '',
+        category: '',
+        chargeDate: '',
+        amount: '',
+        currency: 'USD',
+        frequency: 'Monthly' // Make sure to include frequency
+      });
+    };
+
+    const handleSaveNewTransaction = () => {
+      console.log("Adding new transaction:", newTransaction);
+      setCurrentTransactions([...currentTransactions, newTransaction]);
+      setIsNewTransactionOpen(false);
+      toast(`${newTransaction.name} has been successfully added.`, {
+        action: {
+            label: "Close",
+            onClick: () => console.log("Notification closed"),
+        },
+      });
+    };
+
+    const renderCreateTransactionSheet = () => (
+      <Sheet open={isNewTransactionOpen} onOpenChange={setIsNewTransactionOpen}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Create New Transaction</SheetTitle>
+            <SheetDescription>Enter the details of the new transaction.</SheetDescription>
+          </SheetHeader>
+          <div className="grid gap-4 py-4">
+            <Label htmlFor="newDescription">Description</Label>
+            <Input
+              id="newDescription"
+              value={newTransaction.name}
+              onChange={(e) => setNewTransaction({ ...newTransaction, name: e.target.value })}
+            />
+          </div>
+          <SheetFooter>
+            <SheetClose asChild>
+              <Button onClick={handleSaveNewTransaction}>Save</Button>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+    );
   
     const handleEdit = (transaction: any) => {
       setEditingTransaction(transaction);
@@ -193,6 +259,7 @@ const transactions = [
       <div className="grid gap-10">
             {renderEditSheet()}
             {renderDeleteConfirmationDialog()}
+            {renderCreateTransactionSheet()}
             <Card x-chunk="transaction-settings-chunk-1">
               <CardHeader>
                 <CardTitle>Default Currency</CardTitle>
@@ -259,7 +326,7 @@ const transactions = [
                 </TableBody>
               </Table>
               <div className="flex justify-between mt-4">
-                <Button>Add Transaction</Button>
+                <Button onClick={handleCreateNewTransaction}>Add Transaction</Button>
               </div>
             </CardContent>
           </Card>
