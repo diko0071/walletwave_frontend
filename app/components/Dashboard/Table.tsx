@@ -82,6 +82,21 @@ import {
     converted_currency: string
   }
 
+
+  function currencySymbol(currencyCode: string): string {
+    switch (currencyCode) {
+      case 'USD': return '$';
+      case 'EUR': return '€';
+      case 'GBP': return '£';
+      case 'JPY': return '¥';
+      case 'RUB': return '₽';
+      case 'AED': return 'AED';
+      case 'AUD': return 'AUD';
+      case 'KZT': return '₸';
+      default: return currencyCode;
+    }
+  }
+
 export const columns: ColumnDef<Transaction>[] = [
   {
     id: "select",
@@ -126,11 +141,8 @@ export const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"));
       const currency = row.original.converted_currency; 
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: currency,
-      }).format(amount);
-      return <div className="flex justify-between">{formatted}</div>;
+      const symbol = currencySymbol(currency);
+      return <div className="flex justify-between">{symbol}{amount}</div>;
     },
   },
   {

@@ -57,12 +57,12 @@ export default function Settings() {
 
   return (
     <div className="flex flex-col w-full">
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10 pl-4">
-        <div className="mx-auto grid w-full max-w-6xl gap-2 pl-6">
+      <main className="flex flex-1 flex-col md:gap-8 md:p-10 md:pl-[56px]">
+        <div className="mx-auto grid w-full pl-8">
           <h1 className="text-3xl font-semibold">Settings</h1>
         </div>
         <div className="grid w-full items-start md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
-          <nav className="grid gap-4 text-sm text-muted-foreground justify-items-start pl-12">
+          <nav className="grid gap-4 text-sm text-muted-foreground justify-items-start pl-8">
           <button onClick={changeSection('General')} className={getButtonClass('General')}>
               General
             </button>
