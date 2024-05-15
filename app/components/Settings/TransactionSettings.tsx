@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuConten
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar"
 import ApiService from "@/app/services/apiService";
+import { ReloadIcon } from "@radix-ui/react-icons"
 import { toast } from "sonner";
 import {
     AlertDialog,
@@ -105,7 +106,7 @@ import React, { useState, useEffect } from 'react';
 
 
     useEffect(() => {
-      setIsLoading(true); // Начало загрузки
+      setIsLoading(true); 
       ApiService.get('/api/transactions/recurring/')
         .then(data => {
           console.log("API Response:", data);
@@ -124,7 +125,7 @@ import React, { useState, useEffect } from 'react';
       ApiService.get('/api/auth/user/data/')
         .then(response => {
           console.log("API Response:", response);
-          // Assume response includes user email and currency
+
           setUserSettings({ currency: response.currency, email: response.email }); 
           setIsLoading(false); 
         })
@@ -136,7 +137,6 @@ import React, { useState, useEffect } from 'react';
   
     const handleSaveCurrencyChange = () => {
       setIsLoading(true);
-      // Construct the payload with email and new currency value
       const payload = {
         email: userSettings.email,
         currency: userSettings.currency,
@@ -156,7 +156,6 @@ import React, { useState, useEffect } from 'react';
           setIsLoading(false);
         });
     };
-  
 
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [deletingTransactionId, setDeletingTransactionId] = useState<number | null>(null);
@@ -222,6 +221,7 @@ import React, { useState, useEffect } from 'react';
     
     const handleSaveNewTransaction = () => {
       console.log("Adding new transaction:", newTransaction);
+      setIsLoading(true);
     
       ApiService.post_auth('/api/transactions/recurring/create/', JSON.stringify({
         description: newTransaction.description, 
@@ -234,6 +234,7 @@ import React, { useState, useEffect } from 'react';
       .then(response => {
         setCurrentTransactions(prevData => [...prevData, response]);
         setIsNewTransactionOpen(false);
+        setIsLoading(false);
         toast(`Transaction ${response.description} has been successfully added.`, {
           action: {
               label: "Close",
@@ -243,6 +244,7 @@ import React, { useState, useEffect } from 'react';
       })
       .catch(error => {
         console.error("Error adding new transaction:", error);
+        setIsLoading(false);
       });
     };
 
@@ -316,9 +318,11 @@ import React, { useState, useEffect } from 'react';
             </Select>
           </div>
           <SheetFooter>
-            <SheetClose asChild>
-              <Button onClick={handleSaveNewTransaction}>Save</Button>
-            </SheetClose>
+          <SheetClose asChild>
+            <Button onClick={handleSaveNewTransaction}>
+              {isLoading ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
+            </Button>
+          </SheetClose>
           </SheetFooter>
         </SheetContent>
       </Sheet>
@@ -339,13 +343,12 @@ import React, { useState, useEffect } from 'react';
     };
     const handleSaveTransaction = () => {
       if (editingTransaction) {
-        setIsLoading(true); // Начало загрузки
+        setIsLoading(true); 
         ApiService.put(`/api/transactions/recurring/${editingTransaction.id}/update/`, JSON.stringify(editingTransaction))
           .then(response => {
-            // Обновление списка транзакций на клиенте может потребовать повторного запроса к API или локального обновления
             console.log("Transaction updated successfully:", response);
-            setIsEditSheetOpen(false); // Закрытие модального окна редактирования
-            setIsLoading(false); // Загрузка завершена
+            setIsEditSheetOpen(false); 
+            setIsLoading(false); 
             toast(`Transaction ${response.description} has been successfully updated.`, {
               action: {
                   label: "Close",
@@ -355,7 +358,7 @@ import React, { useState, useEffect } from 'react';
           })
           .catch(error => {
             console.error("Error updating transaction:", error);
-            setIsLoading(false); // Загрузка завершена с ошибкой
+            setIsLoading(false); 
           });
       }
     };
@@ -442,7 +445,7 @@ import React, { useState, useEffect } from 'react';
                 <Label htmlFor="editChargeDay">Charge Day</Label>
                 <Input
                   id="editChargeDay"
-                  type="text" // Или 'date', если вы используете тип input date
+                  type="text" 
                   value={editingTransaction.charge_day}
                   onChange={(e) => setEditingTransaction({ ...editingTransaction, charge_day: e.target.value })}
                 />
@@ -450,7 +453,7 @@ import React, { useState, useEffect } from 'react';
                 <Label htmlFor="editAmount">Amount</Label>
                 <Input
                   id="editAmount"
-                  type="text" // Или 'number', если хотите ограничить ввод только числами
+                  type="text" 
                   value={editingTransaction.amount}
                   onChange={(e) => setEditingTransaction({ ...editingTransaction, amount: e.target.value })}
                 />
@@ -488,8 +491,10 @@ import React, { useState, useEffect } from 'react';
               </Select>
               </div>
               <SheetFooter>
-                <SheetClose asChild>
-                  <Button onClick={handleSaveTransaction}>Save</Button>
+              <SheetClose asChild>
+                  <Button onClick={handleSaveTransaction}>
+                    {isLoading ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
+                  </Button>
                 </SheetClose>
               </SheetFooter>
             </SheetContent>
@@ -549,7 +554,9 @@ import React, { useState, useEffect } from 'react';
             </SelectContent>
           </Select>
                 <div className="flex justify-between mt-4">
-                <Button onClick={handleSaveCurrencyChange}>Save</Button>
+                <Button onClick={handleSaveCurrencyChange}>
+                    {isLoading ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
+                  </Button>
                 </div>
               </CardContent>
             </Card>

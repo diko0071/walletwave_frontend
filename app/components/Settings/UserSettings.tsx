@@ -5,6 +5,7 @@ import { CircleUser, Menu, Package2, Search } from "lucide-react";
 
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table";
+import { ReloadIcon } from "@radix-ui/react-icons"
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,11 +27,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 
-import ApiService from "@/app/services/apiService"; // Assuming you have a service like this for API calls
+import ApiService from "@/app/services/apiService"; 
 import { toast } from "sonner";
 
 export default function UserSettings() {
   const [userData, setUserData] = useState({ name: '', email: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     ApiService.get('/api/auth/user/data')
@@ -43,14 +45,14 @@ export default function UserSettings() {
   }, []);
 
   const handleSave = () => {
+    setIsLoading(true); 
     const payload = { 
       name: userData.name,
-      email: userData.email // Ensure email is included if required by your backend
+      email: userData.email
     };
     ApiService.put('/api/auth/user/data/update/', JSON.stringify(payload))
       .then(() => {
         console.log("User data updated successfully");
-        // Add the toast notification here with the user's name
         toast(`${userData.name}'s data has been updated successfully.`, {
           action: {
             label: "Close",
@@ -60,7 +62,9 @@ export default function UserSettings() {
       })
       .catch(error => {
         console.error("Error updating user data:", error);
-        // Optionally, show an error message to the user
+      })
+      .finally(() => {
+        setIsLoading(false); 
       });
   };
 
@@ -86,7 +90,9 @@ export default function UserSettings() {
             />
           </form>
           <div className="flex justify-between mt-4">
-            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleSave}>
+              {isLoading ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
+            </Button>
           </div>
         </CardContent>
       </Card>
