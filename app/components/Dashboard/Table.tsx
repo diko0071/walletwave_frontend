@@ -235,7 +235,9 @@ export function DataTable() {
     to: new Date(),
   });
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: 'date', desc: true }
+  ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -396,7 +398,7 @@ const fetchTransaction = async (transactionId: string) => {
     const transaction = {
       id: response.id.toString(),
       description: response.description,
-      date: response.transaction_date,
+      date: response.transaction_date.split('T')[0],
       category: response.category,
       amount: response.converted_amount,
       converted_amount: response.converted_amount,
@@ -573,7 +575,6 @@ const renderDeleteConfirmationDialog = () => (
       </DropdownMenu>
     );
   };
-
 
   const table = useReactTable({
     data: filteredData,
