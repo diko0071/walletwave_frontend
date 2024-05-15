@@ -149,10 +149,11 @@ import React, { useState, useEffect } from 'react';
               onClick: () => console.log("Notification closed"),
             },
           });
-          setIsLoadingSaveCurrency(false);
         })
         .catch(error => {
           console.error("Error updating currency:", error);
+        })
+        .finally(() => {
           setIsLoadingSaveCurrency(false);
         });
     };
@@ -556,7 +557,7 @@ import React, { useState, useEffect } from 'react';
           </Select>
                 <div className="flex justify-between mt-4">
                 <Button onClick={handleSaveCurrencyChange}>
-                    {isLoading ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
+                    {isLoadingSaveCurrency ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
                   </Button>
                 </div>
               </CardContent>
