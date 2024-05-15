@@ -136,7 +136,7 @@ import React, { useState, useEffect } from 'react';
     }, []);
   
     const handleSaveCurrencyChange = () => {
-      setIsLoading(true);
+      setIsLoadingSaveCurrency(true);
       const payload = {
         email: userSettings.email,
         currency: userSettings.currency,
@@ -149,11 +149,11 @@ import React, { useState, useEffect } from 'react';
               onClick: () => console.log("Notification closed"),
             },
           });
-          setIsLoading(false);
+          setIsLoadingSaveCurrency(false);
         })
         .catch(error => {
           console.error("Error updating currency:", error);
-          setIsLoading(false);
+          setIsLoadingSaveCurrency(false);
         });
     };
 
@@ -190,6 +190,7 @@ import React, { useState, useEffect } from 'react';
       };
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingSaveCurrency, setIsLoadingSaveCurrency] = useState(false);
 
     const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
