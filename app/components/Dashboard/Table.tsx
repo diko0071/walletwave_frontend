@@ -3,6 +3,7 @@ import * as React from "react";
 import { DateRange } from "react-day-picker";
 import { format, addDays, parseISO, subDays, parse} from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
+import { cn } from "../../lib/utils"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -253,8 +254,8 @@ export function DataTable() {
     }
   
     return data.filter((transaction) => {
-      const transactionDate = parseDateString(transaction.date);
-      const dateInRange = !dateRange || !dateRange.from || !dateRange.to || (transactionDate >= dateRange.from && transactionDate <= dateRange.to);
+      const dateInRange = !dateRange || !dateRange.from || !dateRange.to || 
+        (transaction.date >= format(dateRange.from, 'yyyy-MM-dd') && transaction.date <= format(dateRange.to, 'yyyy-MM-dd'));
       const categoryMatches = selectedCategories.includes(transaction.category);
       return dateInRange && categoryMatches;
     });
@@ -267,6 +268,7 @@ export function DataTable() {
       category: transaction.category,
       amount: transaction.converted_amount,
       currency: transaction.converted_currency,
+      transaction_date: transaction.date 
     }))
       .then(() => {
         showNotification('save', transaction);
@@ -347,7 +349,7 @@ export function DataTable() {
     return jsonData.map((item: any) => ({
       id: item.id.toString(),
       description: item.description,
-      date: item.created_at ? format(parseISO(item.created_at), 'MMMM d, yyyy') : 'No date provided',
+      date: item.transaction_date ? item.transaction_date : 'No date provided',
       category: item.category,
       amount: item.converted_amount ? `${item.converted_amount} ${item.converted_currency}` : `${item.amount} ${item.transaction_currency}`,
       converted_amount: item.converted_amount,
@@ -394,7 +396,7 @@ const fetchTransaction = async (transactionId: string) => {
     const transaction = {
       id: response.id.toString(),
       description: response.description,
-      date: format(parseISO(response.created_at), 'MMMM d, yyyy'),
+      date: response.transaction_date,
       category: response.category,
       amount: response.converted_amount,
       converted_amount: response.converted_amount,
@@ -506,21 +508,36 @@ const renderDeleteConfirmationDialog = () => (
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-7 text-sm">
+          <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="date" className="text-right">
             Date
           </Label>
           <div className="col-span-3">
-          <div className="grid grid-cols-2 items-center">
-              <div className="col-span-3 flex items-center">
-                <p className="justify-start text-left">
-                  {editingTransaction.date ? format(parseDateString(editingTransaction.date), "PPP") : "No date provided"}
-                </p>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !editingTransaction.date && "text-muted-foreground")}>
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {editingTransaction.date ? format(new Date(editingTransaction.date), "PPP") : "No date provided"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <Calendar 
+                    mode="single" 
+                    selected={editingTransaction.date ? new Date(editingTransaction.date) : undefined}
+                    onSelect={(date: Date | undefined) => {
+                      if (date) {
+                        setEditingTransaction({ ...editingTransaction, date: format(date, "yyyy-MM-dd") });
+                      }
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
               </div>
             </div>
           </div>
-        </div>
-      </div>
       <SheetFooter>
           <SheetClose asChild>
             <Button type="button" onClick={() => {
