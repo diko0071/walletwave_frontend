@@ -45,7 +45,7 @@ function processApiData(apiResponse: any): TransactionStat {
     today_sum: apiResponse.today_sum,
     yesterday_sum: apiResponse.yesterday_sum,
     daily_change: apiResponse.daily_change,
-    daily_change_absolute: apiResponse.daily_change_absolute,
+    daily_change_absolute: Math.abs(apiResponse.daily_change_absolute),
   };
 }
 
