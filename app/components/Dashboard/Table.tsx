@@ -78,7 +78,6 @@ import {
     description: string
     date: string
     category: string
-    amount: string
     converted_amount: number
     converted_currency: string
   }
@@ -353,9 +352,8 @@ export function DataTable() {
       description: item.description,
       date: item.transaction_date ? item.transaction_date : 'No date provided',
       category: item.category,
-      amount: item.converted_amount ? `${item.converted_amount} ${item.converted_currency}` : `${item.amount} ${item.transaction_currency}`,
       converted_amount: item.converted_amount,
-      converted_currency: item.converted_currency ? item.converted_currency : item.transaction_currency,
+      converted_currency: item.converted_currency,
     }));
   }
 
@@ -400,7 +398,6 @@ const fetchTransaction = async (transactionId: string) => {
       description: response.description,
       date: response.transaction_date.split('T')[0],
       category: response.category,
-      amount: response.converted_amount,
       converted_amount: response.converted_amount,
       converted_currency: response.converted_currency,
     };
