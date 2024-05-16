@@ -80,6 +80,8 @@ import {
     category: string
     converted_amount: number
     converted_currency: string
+    transaction_currency: string
+    amount: number
   }
 
 
@@ -128,7 +130,7 @@ export const columns: ColumnDef<Transaction>[] = [
     ),
   },
   {
-    accessorKey: "amount",
+    accessorKey: "converted_amount",
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -139,7 +141,7 @@ export const columns: ColumnDef<Transaction>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const amount = parseFloat(row.getValue("converted_amount"));
       const currency = row.original.converted_currency; 
       const symbol = currencySymbol(currency);
       return <div className="flex justify-between">{symbol}{amount}</div>;
@@ -267,9 +269,9 @@ export function DataTable() {
     ApiService.put(`/api/transactions/${transaction.id}/update/`, JSON.stringify({
       description: transaction.description,
       category: transaction.category,
-      amount: transaction.converted_amount,
-      currency: transaction.converted_currency,
-      transaction_date: transaction.date 
+      transaction_date: transaction.date,
+      transaction_currency: transaction.transaction_currency,
+      amount: transaction.amount
     }))
       .then(() => {
         showNotification('save', transaction);
@@ -354,6 +356,8 @@ export function DataTable() {
       category: item.category,
       converted_amount: item.converted_amount,
       converted_currency: item.converted_currency,
+      transaction_currency: item.transaction_currency,
+      amount: item.amount
     }));
   }
 
@@ -400,6 +404,8 @@ const fetchTransaction = async (transactionId: string) => {
       category: response.category,
       converted_amount: response.converted_amount,
       converted_currency: response.converted_currency,
+      transaction_currency: response.transaction_currency,
+      amount: response.amount
     };
     setEditingTransaction(transaction);
     setIsEditSheetOpen(true);
@@ -458,8 +464,8 @@ const renderDeleteConfirmationDialog = () => (
             <Input
               id="amount"
               type="number"
-              value={editingTransaction.converted_amount}
-              onChange={(e) => setEditingTransaction({ ...editingTransaction, converted_amount: parseFloat(e.target.value) })}
+              value={editingTransaction.amount}
+              onChange={(e) => setEditingTransaction({ ...editingTransaction, amount: parseFloat(e.target.value) })}
               className="col-span-3"
             />
           </div>
@@ -469,18 +475,18 @@ const renderDeleteConfirmationDialog = () => (
           </Label>
           <div className="col-span-3">
             <Select
-              value={editingTransaction.converted_currency || "Select a currency"} 
-              onValueChange={(value) => setEditingTransaction({ ...editingTransaction, converted_currency: value })}
+              value={editingTransaction.transaction_currency || "Select a currency"} 
+              onValueChange={(value) => setEditingTransaction({ ...editingTransaction, transaction_currency: value })}
             >
               <SelectTrigger className="w-full">
-                {editingTransaction.converted_currency || "Select a currency"}
+                {editingTransaction.transaction_currency || "Select a currency"}
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="USD">USD</SelectItem>
                 <SelectItem value="EUR">EUR</SelectItem>
                 <SelectItem value="RUB">RUB</SelectItem>
                 <SelectItem value="AED">AED</SelectItem>
-                <SelectItem value="EUR">EUR</SelectItem>
+                <SelectItem value="UAH">KZT</SelectItem>
               </SelectContent>
             </Select>
           </div>
