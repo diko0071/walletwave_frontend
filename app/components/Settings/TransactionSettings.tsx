@@ -82,6 +82,7 @@ import React, { useState, useEffect } from 'react';
     amount: string;
     currency: string;
     frequency: string; 
+    next_charge_date: string;
   };
 
   function currencySymbol(currencyCode: string): string {
@@ -204,7 +205,8 @@ import React, { useState, useEffect } from 'react';
       charge_day: '',
       amount: '',
       currency: 'USD',
-      frequency: 'Monthly'
+      frequency: 'Monthly',
+      next_charge_date: ''
     });
     
 
@@ -217,7 +219,8 @@ import React, { useState, useEffect } from 'react';
         charge_day: '',
         amount: '',
         currency: 'USD',
-        frequency: 'Monthly' 
+        frequency: 'Monthly',
+        next_charge_date: ''
       });
     };
     
@@ -278,7 +281,7 @@ import React, { useState, useEffect } from 'react';
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <Label htmlFor="newChargeDate">Charge Date</Label>
+            <Label htmlFor="newChargeDate">Charge Day</Label>
             <Input
               id="newChargeDate"
               value={newTransaction.charge_day}
@@ -575,7 +578,7 @@ import React, { useState, useEffect } from 'react';
                     <TableRow>
                       <TableHead>Description</TableHead>
                       <TableHead>Category</TableHead>
-                      <TableHead>Charge Day</TableHead>
+                      <TableHead>Next Charge Date</TableHead>
                       <TableHead>Amount</TableHead>
                       <TableHead>Frequency</TableHead>
                       <TableHead></TableHead>
@@ -587,7 +590,7 @@ import React, { useState, useEffect } from 'react';
                         <TableRow key={transaction.id}>
                           <TableCell><span>{transaction.description}</span></TableCell>
                           <TableCell><span>{transaction.category}</span></TableCell>
-                          <TableCell><span>{transaction.charge_day}</span></TableCell>
+                          <TableCell><span>{transaction.next_charge_date}</span></TableCell>
                           <TableCell><span>{currencySymbol(transaction.currency) + transaction.amount}</span></TableCell>
                           <TableCell><span>{transaction.frequency}</span></TableCell>
                           <TableCell>
