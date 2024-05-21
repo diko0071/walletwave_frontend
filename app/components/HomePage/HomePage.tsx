@@ -105,7 +105,7 @@ export default function HomePage() {
   
     return (
       <span>
-        You spent today <span className={todaySumColor}>${data.today_sum}</span> that is {comparisonText} on {data.daily_change}% (${data.daily_change_absolute}) than you did on yesterday.
+        You spent today <span className={todaySumColor}>${data.today_sum}</span> that is {comparisonText} on {data.daily_change}% (${data.daily_change_absolute}) than you did on yesterday
       </span>
     );
   }
