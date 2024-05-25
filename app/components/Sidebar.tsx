@@ -73,6 +73,10 @@ export default function Sidebar() {
     router.push("/settings");
   };
 
+  const navigateToChat = () => {
+    router.push("/chat");
+  };
+
   return (
       <aside className="inset-y fixed  left-0 z-20 flex h-full flex-col border-r">
         <div className="border-b p-2">
@@ -105,6 +109,7 @@ export default function Sidebar() {
                 size="icon"
                 className="rounded-lg"
                 aria-label="AI Chat"
+                onClick={navigateToChat}
               >
                 <Bot className="size-5" />
               </Button>

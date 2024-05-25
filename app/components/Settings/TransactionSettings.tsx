@@ -528,7 +528,7 @@ import React, { useState, useEffect } from 'react';
     );
   
     return (
-      <div className="grid gap-10">
+      <div className="grid gap-6">
             {renderEditSheet()}
             {renderDeleteConfirmationDialog()}
             {renderCreateTransactionSheet()}
