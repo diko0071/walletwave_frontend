@@ -232,7 +232,7 @@ export default function ChatWithHistory() {
                                               <div className="text-xs text-gray-500 dark:text-gray-400">{message.time}</div>
                                           </div>
                                       ))}
-                                      {isLoading && (
+                                      {isLoadingMessages && (
                                           <div className="flex flex-col items-start gap-2">
                                               <div className="flex items-center gap-2">
                                                   <Avatar className="w-6 h-6">
@@ -259,7 +259,7 @@ export default function ChatWithHistory() {
                                   <Button
                                       className="rounded-md bg-[#0F172A] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#0c1423] focus:outline-none focus:ring-2 focus:ring-[#0F172A] focus:ring-offset-2 dark:bg-[#0c1423] dark:hover:bg-[#0a1120] dark:focus:ring-[#0F172A]"
                                       onClick={handleSendMessage}
-                                      disabled={isLoading}
+                                      disabled={isLoadingMessages}
                                   >
                                       Send
                                   </Button>
