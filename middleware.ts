@@ -12,7 +12,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  const protectedRoutes = ['/dashboard', '/profile', '/settings', '/']; 
+  if (pathname.startsWith('/chat/') && !token && !userId) {
+    const redirectUrl = new URL('/login', request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  if (pathname === '/chat') {
+    const redirectUrl = new URL('/chat/new', request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  const protectedRoutes = ['/dashboard', '/profile', '/settings', '/', '/chat/:path*']; 
   if (protectedRoutes.includes(pathname) && (!token || !userId)) {
     const redirectUrl = new URL('/login', request.url);
     return NextResponse.redirect(redirectUrl);
@@ -21,5 +31,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/login', '/signup', '/dashboard', '/profile', '/settings', '/'],
+  matcher: ['/login', '/signup', '/dashboard', '/profile', '/settings', '/', '/chat/:path*'],
 };
