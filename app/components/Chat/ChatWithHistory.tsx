@@ -105,34 +105,42 @@ interface ChatWithHistoryProps {
 
 export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHistoryProps) {
   const [chatExists, setChatExists] = useState<boolean>(true);
-  const [messages, setMessages] = useState([{ id: 1, sender: "AI", text: "Hey! I'm your Personal Finance AI. How can I help you today?", time: "10:30 AM", align: "start" }]);
+  const [messages, setMessages] = useState(initialMessages);
   const [inputValue, setInputValue] = useState("");
   const [chatTitle, setChatTitle] = useState('New Chat');
   const [isLoadingSession, setIsLoadingSession] = useState(false); 
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isLoadingNewMessage, setIsLoadingNewMessage] = useState(false);
-
+  const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(chatId && chatId !== 'new' ? String(chatId) : undefined);
 
   useEffect(() => {
+    console.log('useEffect - fetchChatDetails: chatId =', chatId);
+
     const fetchChatDetails = async () => {
       if (!chatId || chatId === 'new') {
+        console.log('ChatId is new or undefined, setting chatExists to false');
         setChatExists(false);
         return;
       }
 
       try {
+        console.log('Fetching all chats');
         const allChatsResponse = await ApiService.get('/api/chat/');
         const exists = allChatsResponse.some((chat: any) => chat.id.toString() === chatId.toString());
+        console.log('Chat exists:', exists);
         if (!exists) {
           setChatExists(false);
           return;
         }
 
+        console.log('Fetching chat details for chatId:', chatId);
         const chatResponse = await ApiService.get(`/api/chat/${chatId}`);
         if (chatResponse) {
           setChatExists(true);
           setChatTitle(chatResponse.session_name);
+          setCurrentSessionId(chatId.toString());
+          console.log('Chat exists, session name:', chatResponse.session_name);
         } else {
           setChatExists(false);
         }
@@ -147,6 +155,7 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
 
   useEffect(() => {
     if (!chatExists && chatId !== 'new' && chatId !== undefined) {
+      console.log('Invalid chatId, calling onInvalidChatId');
       onInvalidChatId();
     }
   }, [chatExists, chatId, onInvalidChatId]);
@@ -157,7 +166,6 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
       return;
     }
 
-  
     const userMessage = {
       id: Date.now(),
       sender: "ME",
@@ -165,34 +173,41 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       align: "end",
     };
-  
+
     setMessages(prevMessages => [...prevMessages, userMessage]);
     setInputValue("");
 
-
     setIsLoadingNewMessage(true);
-  
+
     try {
-      let currentSessionId = chatId;
-      if (chatId === 'new') {
-        const createResponse = await ApiService.post_auth('/api/chat/create/', JSON.stringify({human_message: inputValue}));
-        if (createResponse && createResponse.id) {
-          currentSessionId = createResponse.id;
-          window.history.pushState(null, '', `/chat/${currentSessionId}`); 
+      let sessionIdToUse = currentSessionId;
+      console.log('handleSendMessage - currentSessionId:', currentSessionId);
+
+      if (chatId === 'new' && !currentSessionId) {
+        console.log('Creating a new chat session');
+        const createResponse = await ApiService.post_auth('/api/chat/create/', JSON.stringify({ human_message: inputValue }));
+        if (createResponse && createResponse.id !== undefined) {
+          sessionIdToUse = String(createResponse.id);
+          setCurrentSessionId(sessionIdToUse);
+          window.history.pushState(null, '', `/chat/${sessionIdToUse}`);
+          console.log('New chat created with sessionId:', sessionIdToUse);
         } else {
           console.error("Unexpected response format:", createResponse);
           setIsLoadingNewMessage(false);
           return;
         }
+      } else if (!sessionIdToUse) {
+        console.error("Session ID is undefined after checking chatId.");
+        setIsLoadingNewMessage(false);
+        return;
       }
-  
+
       const messageData = {
-        session: currentSessionId,
+        session: sessionIdToUse,
         human_message: inputValue,
       };
-      console.log(isLoadingMessages)
-  
-      const response = await ApiService.post_auth(`/api/chat/${currentSessionId}/answer/`, JSON.stringify(messageData));
+
+      const response = await ApiService.post_auth(`/api/chat/${sessionIdToUse}/answer/`, JSON.stringify(messageData));
       if (response && response.response) {
         const botMessage = {
           id: Date.now() + 1,
@@ -214,26 +229,33 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
   };
 
   useEffect(() => {
-    const fetchChatDetails = async () => {
+    console.log('useEffect - fetchChatMessages: chatId =', chatId);
+
+    const fetchChatMessages = async () => {
       if (!chatId || chatId === 'new') {
+        console.log('ChatId is new or undefined, setting chatExists to false');
         setChatExists(false);
         return;
       }
 
       setIsLoadingSession(true);
       try {
+        console.log('Fetching all chats');
         const allChatsResponse = await ApiService.get('/api/chat/');
         const exists = allChatsResponse.some((chat: any) => chat.id.toString() === chatId.toString());
+        console.log('Chat exists:', exists);
         if (!exists) {
           setChatExists(false);
           setIsLoadingSession(false); 
           return;
         }
 
+        console.log('Fetching chat messages for chatId:', chatId);
         const chatResponse = await ApiService.get(`/api/chat/${chatId}`);
         if (chatResponse) {
           setChatExists(true);
           setChatTitle(chatResponse.session_name);
+          setCurrentSessionId(chatId.toString());
           const formattedMessages = chatResponse.previous_messages.map((msg: any) => ({
             id: Date.now() + Math.random(),
             sender: msg.type === 'human' ? 'ME' : 'AI',
@@ -253,14 +275,12 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
       }
     };
 
-    fetchChatDetails();
+    fetchChatMessages();
   }, [chatId]);
-
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
   
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-2">
@@ -367,12 +387,12 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
                                       type="text"
                                       value={inputValue}
                                       onChange={(e) => setInputValue(e.target.value)}
-                                      disabled={isLoadingMessages}
+                                      disabled={isLoadingNewMessage}
                                   />
                                   <Button
                                       className="rounded-md bg-[#0F172A] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#0c1423] focus:outline-none focus:ring-2 focus:ring-[#0F172A] focus:ring-offset-2 dark:bg-[#0c1423] dark:hover:bg-[#0a1120] dark:focus:ring-[#0F172A]"
                                       onClick={handleSendMessage}
-                                      disabled={isLoadingMessages}
+                                      disabled={isLoadingNewMessage}
                                   >
                                       Send
                                   </Button>
