@@ -2,6 +2,7 @@
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import {
   Card,
   CardContent,
@@ -34,7 +35,8 @@ import {
   ArrowRight,
   MoreHorizontal,
   MessageSquarePlus,
-  MessagesSquare
+  MessagesSquare,
+  ExternalLink
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -113,6 +115,7 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isLoadingNewMessage, setIsLoadingNewMessage] = useState(false);
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(chatId && chatId !== 'new' ? String(chatId) : undefined);
+  const [chats, setChats] = useState([]);
 
   useEffect(() => {
     console.log('useEffect - fetchChatDetails: chatId =', chatId);
@@ -281,16 +284,70 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const [isChatListOpen, setIsChatListOpen] = useState(false);
+
+  const [chatList, setChatList] = useState<Chat[]>([]);
+
+  const handleOpenChatList = () => {
+    ApiService.get('/api/chat/')
+    .then(response => {
+      console.log("API Response:", response); // Ensure this logs the array of chats
+      if (response && Array.isArray(response)) {
+        setChatList(response); // Directly use the response if it's the array
+        setIsChatListOpen(true);
+      } else {
+        console.error("Chat data is not found in the response");
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching chat data:", error);
+    });
+  };
+  useEffect(() => {
+    console.log("Chat List Updated:", chatList);
+  }, [chatList]);
+  
+  const renderChatList = () => (
+    <Sheet open={isChatListOpen} onOpenChange={setIsChatListOpen}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Chats History</SheetTitle>
+        </SheetHeader>
+        <div className="grid gap-3 py-4 overflow-auto max-h-[150vh]"> {/* Добавлены стили для прокрутки */}
+          {chatList && chatList.length > 0 ? (
+            chatList.map((chat) => (
+              <Link className="grid w-full" href={`/chat/${chat.id}`}> 
+              <Button variant='ghost' className="justify-between border" key={chat.id} onClick={() => setCurrentSessionId(chat.id.toString())}>
+                {chat.session_name}
+                <ExternalLink className="h-3 w-3" href={`/chat/${chat.id}`}>Open</ExternalLink>
+              </Button>
+              </Link>
+            ))
+          ) : (
+            <div>No chats available.</div>
+          )}
+        </div>
+        <SheetFooter>
+          <SheetClose asChild>
+            <Button>Close</Button>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+  
   
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-2">
+      {renderChatList()}
       <div className="mx-auto grid w-full max-w-6xl">
         <div className="flex flex-col w-full h-full gap-3">
           <div className="flex justify-end gap-3">
             <Button variant='outline' size='icon'>
               <MessageSquarePlus />
             </Button>
-            <Button variant='outline' size='icon'>
+            <Button variant='outline' size='icon' onClick={handleOpenChatList}>
               <MessagesSquare />
             </Button>
           </div>
@@ -405,5 +462,4 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
               </div>
       </main>
   );
-  
 }
