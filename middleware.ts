@@ -17,6 +17,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
+  if (pathname.startsWith('/chat/:path*') && !token && !userId) {
+    const redirectUrl = new URL('/login', request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
+
   if (pathname === '/chat') {
     const redirectUrl = new URL('/chat/new', request.url);
     return NextResponse.redirect(redirectUrl);

@@ -11,7 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { toast } from "sonner";
 import { useState, useRef, useEffect } from "react";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import {
   Bird,
   Book,
@@ -63,6 +65,18 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 
 import {
@@ -118,11 +132,9 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
   const [chats, setChats] = useState([]);
 
   useEffect(() => {
-    console.log('useEffect - fetchChatDetails: chatId =', chatId);
 
     const fetchChatDetails = async () => {
       if (!chatId || chatId === 'new') {
-        console.log('ChatId is new or undefined, setting chatExists to false');
         setChatExists(false);
         return;
       }
@@ -158,7 +170,6 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
 
   useEffect(() => {
     if (!chatExists && chatId !== 'new' && chatId !== undefined) {
-      console.log('Invalid chatId, calling onInvalidChatId');
       onInvalidChatId();
     }
   }, [chatExists, chatId, onInvalidChatId]);
@@ -187,20 +198,16 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
       console.log('handleSendMessage - currentSessionId:', currentSessionId);
 
       if (chatId === 'new' && !currentSessionId) {
-        console.log('Creating a new chat session');
         const createResponse = await ApiService.post_auth('/api/chat/create/', JSON.stringify({ human_message: inputValue }));
         if (createResponse && createResponse.id !== undefined) {
           sessionIdToUse = String(createResponse.id);
           setCurrentSessionId(sessionIdToUse);
           window.history.pushState(null, '', `/chat/${sessionIdToUse}`);
-          console.log('New chat created with sessionId:', sessionIdToUse);
         } else {
-          console.error("Unexpected response format:", createResponse);
           setIsLoadingNewMessage(false);
           return;
         }
       } else if (!sessionIdToUse) {
-        console.error("Session ID is undefined after checking chatId.");
         setIsLoadingNewMessage(false);
         return;
       }
@@ -222,38 +229,30 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
         setMessages(prevMessages => [...prevMessages, botMessage]);
         setIsLoadingNewMessage(false);
       } else {
-        console.error("No response from server");
       }
     } catch (error) {
-      console.error("Error sending message to API:", error);
     } finally {
       setIsLoadingNewMessage(false);
     }
   };
 
   useEffect(() => {
-    console.log('useEffect - fetchChatMessages: chatId =', chatId);
-
     const fetchChatMessages = async () => {
       if (!chatId || chatId === 'new') {
-        console.log('ChatId is new or undefined, setting chatExists to false');
         setChatExists(false);
         return;
       }
 
       setIsLoadingSession(true);
       try {
-        console.log('Fetching all chats');
         const allChatsResponse = await ApiService.get('/api/chat/');
         const exists = allChatsResponse.some((chat: any) => chat.id.toString() === chatId.toString());
-        console.log('Chat exists:', exists);
         if (!exists) {
           setChatExists(false);
           setIsLoadingSession(false); 
           return;
         }
 
-        console.log('Fetching chat messages for chatId:', chatId);
         const chatResponse = await ApiService.get(`/api/chat/${chatId}`);
         if (chatResponse) {
           setChatExists(true);
@@ -271,7 +270,6 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
           setChatExists(false);
         }
       } catch (error) {
-        console.error("Error fetching chat data:", error);
         setChatExists(false);
       } finally {
         setIsLoadingSession(false); 
@@ -292,12 +290,11 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
   const handleOpenChatList = () => {
     ApiService.get('/api/chat/')
     .then(response => {
-      console.log("API Response:", response); // Ensure this logs the array of chats
       if (response && Array.isArray(response)) {
-        setChatList(response); // Directly use the response if it's the array
+        setChatList(response); 
         setIsChatListOpen(true);
       } else {
-        console.error("Chat data is not found in the response");
+        console.error("Error fetching chat data:", response);
       }
     })
     .catch(error => {
@@ -314,7 +311,7 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
         <SheetHeader>
           <SheetTitle>Chats History</SheetTitle>
         </SheetHeader>
-        <div className="grid gap-3 py-4 overflow-auto max-h-[150vh]"> {/* Добавлены стили для прокрутки */}
+        <div className="grid gap-3 py-4 overflow-auto max-h-[150vh]"> 
           {chatList && chatList.length > 0 ? (
             chatList.map((chat) => (
               <Link className="grid w-full" href={`/chat/${chat.id}`}> 
@@ -336,15 +333,180 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
       </SheetContent>
     </Sheet>
   );
+
+  const showNotification = (action: 'edit' | 'delete', chat: Chat) => {
+    if (action === 'edit') {
+      setLoadingState(prevState => ({ ...prevState, edit: true }));
+      toast(`${chat.session_name} chat has been successfully renamed.`, {
+        action: {
+          label: "Close",
+          onClick: () => console.log("Notification closed"),
+        },
+      });
+      setLoadingState(prevState => ({ ...prevState, edit: false }));
+    }
+    if (action === 'delete') {
+      setLoadingState(prevState => ({ ...prevState, delete: true }));
+      toast(`${chat.session_name} chat has been successfully deleted.`, {
+        action: {
+          label: "Close",
+          onClick: () => console.log("Notification closed"),
+        },
+      });
+      setLoadingState(prevState => ({ ...prevState, delete: false }));
+    }
+  };
   
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [chatToDelete, setChatToDelete] = useState<Chat | null>(null);
+  const [loadingState, setLoadingState] = useState({ save: false, delete: false });
+  const [currentChat, setCurrentChat] = useState<Chat | undefined>();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [chatToEdit, setChatToEdit] = useState<Chat | null>(null);
+  const [newSessionName, setNewSessionName] = useState('');
+
+  useEffect(() => {
+    if (currentSessionId) {
+      ApiService.get(`/api/chat/${currentSessionId}`)
+        .then(response => {
+          console.log('Found chat:', response);
+          setCurrentChat(response);
+        })
+        .catch(error => {
+          console.error("Error fetching chat data:", error);
+        });
+    }
+  }, [chatList, currentSessionId]);
   
+  const handleDeleteChat = async (chat: Chat) => {
+    try {
+      await ApiService.delete(`/api/chat/${chat.id}/delete`);
+      showNotification('delete', chat);
+      setChatList(prevChats => prevChats.filter(c => c.id !== chat.id));
+      setCurrentChat(undefined); 
+      window.location.href = '/chat/new';
+    } catch (error) {
+      console.error('Failed to delete chat:', error);
+    }
+  };
+  
+const handleDeleteClick = (chat: Chat) => {
+  setChatToDelete(chat); 
+  setIsAlertDialogOpen(true); 
+};
+  
+  const confirmDeleteChat = () => {
+    if (chatToDelete) {
+      handleDeleteChat(chatToDelete);
+      setIsAlertDialogOpen(false);
+      setChatToDelete(null);
+    }
+  };
+  
+  const renderDeleteConfirmationDialog = () => (
+    <AlertDialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline" style={{ display: "none" }}>Open</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete the chat and remove it from your records.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <Button onClick={() => setIsAlertDialogOpen(false)}>Cancel</Button>
+          <Button className="ml-2 bg-red-500 hover:bg-red-700" onClick={confirmDeleteChat}>Continue</Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
+  const handleEditChat = async (chat: Chat, newName: string) => {
+    try {
+      await ApiService.put(`/api/chat/${chat.id}/update/`, JSON.stringify({ session_name: newName }));
+      showNotification('edit', { ...chat, session_name: newName });
+      setChatList(prevChats => prevChats.map(c => c.id === chat.id ? { ...c, session_name: newName } : c));
+      setCurrentChat(current => current?.id === chat.id ? { ...current, session_name: newName } : current);
+    } catch (error) {
+      console.error('Failed to edit chat:', error);
+    }
+  };
+
+  const handleEditClick = (chat: Chat) => {
+    setChatToEdit(chat);
+    setNewSessionName(chat.session_name);
+    setIsEditDialogOpen(true);
+  };
+  
+  const confirmEditChat = () => {
+    if (chatToEdit && newSessionName) {
+      handleEditChat(chatToEdit, newSessionName);
+      setIsEditDialogOpen(false);
+      setChatToEdit(null);
+      window.location.reload();
+    }
+  };
+  
+  const redirectNew = () => {
+    window.location.href = '/chat/new';
+  };
+
+  const renderEditConfirmationDialog = () => (
+    <AlertDialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline" style={{ display: "none" }}>Open</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Change session name</AlertDialogTitle>
+        </AlertDialogHeader>
+        <AlertDialogDescription>
+          <Input
+            type="text"
+            value={newSessionName}
+            onChange={(e) => setNewSessionName(e.target.value)}
+            className="w-full border rounded px-2 py-1 text-black"
+          />
+        </AlertDialogDescription>
+        <AlertDialogFooter>
+          <Button onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+          <Button className="ml-2" onClick={confirmEditChat}>Save Changes</Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
+  const renderActionMenu = (chat: Chat) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0 mr-6">
+          <MoreHorizontal className="h-6 w-6" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => handleEditClick(chat)}>
+          Edit
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => handleDeleteClick(chat)} className="text-red-500">
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-2">
       {renderChatList()}
+      {renderDeleteConfirmationDialog()}
+      {renderEditConfirmationDialog()}
       <div className="mx-auto grid w-full max-w-6xl">
         <div className="flex flex-col w-full h-full gap-3">
           <div className="flex justify-end gap-3">
-            <Button variant='outline' size='icon'>
+            <Button variant='outline' size='icon' onClick={redirectNew}>
               <MessageSquarePlus />
             </Button>
             <Button variant='outline' size='icon' onClick={handleOpenChatList}>
@@ -361,9 +523,7 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
                   <CardTitle>{chatTitle}</CardTitle>
                 )}
               </CardHeader>
-                <Button variant="ghost" size="icon" className="mr-5">
-                  <MoreHorizontal />
-                </Button>
+              {currentChat && renderActionMenu(currentChat)}
               </div>
               <CardContent>
                 <div className="flex flex-col h-full w-full">
