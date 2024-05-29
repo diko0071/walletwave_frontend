@@ -310,9 +310,7 @@ export function DataTable() {
     setLoadingState(prevState => ({ ...prevState, delete: true }));
     ApiService.delete(`/api/transactions/${transaction.id}/delete/`)
       .then(() => {
-        // Теперь передаём весь объект транзакции в showNotification
         showNotification('delete', transaction);
-        // Обновляем состояние, удаляя транзакцию
         setData(prevData => prevData.filter(t => t.id !== transaction.id));
       })
       .catch(error => {

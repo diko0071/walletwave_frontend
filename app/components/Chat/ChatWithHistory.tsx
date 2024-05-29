@@ -487,7 +487,7 @@ const handleDeleteClick = (chat: Chat) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleEditClick(chat)}>
-          Edit
+          Rename
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => handleDeleteClick(chat)} className="text-red-500">
