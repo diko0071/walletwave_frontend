@@ -2,6 +2,7 @@
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import ReactMarkdown from 'react-markdown';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import {
   Card,
@@ -13,6 +14,8 @@ import {
 } from "@/components/ui/card"
 import { toast } from "sonner";
 import { useState, useRef, useEffect } from "react";
+import gfm from 'remark-gfm';
+import remarkGfm from 'remark-gfm';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import {
   Bird,
@@ -222,7 +225,7 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
         const botMessage = {
           id: Date.now() + 1,
           sender: "AI",
-          text: response.response,
+          text: `\n${response.response}\n`,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           align: "start",
         };
@@ -448,6 +451,25 @@ const handleDeleteClick = (chat: Chat) => {
       window.location.reload();
     }
   };
+
+  const tableStyles = {
+    width: '100%',
+    borderCollapse: 'collapse' as const,
+    marginTop: '16px',
+    marginBottom: '16px'
+};
+
+const cellStyles = {
+    border: '1px solid #ddd',
+    padding: '8px',
+    textAlign: 'left' as const
+};
+
+const headerStyles = {
+  ...cellStyles,
+  fontWeight: 'bold' as const,
+  backgroundColor: '#f8f8f8'
+};
   
   const redirectNew = () => {
     window.location.href = '/chat/new';
@@ -569,7 +591,12 @@ const handleDeleteClick = (chat: Chat) => {
                                 </Avatar>
                               )}
                               <div className={`rounded-lg ${message.align === "end" ? "bg-[#0F172A] text-white" : "bg-gray-100 dark:bg-gray-800 dark:text-gray-200"} p-3 text-sm shadow-sm`}>
-                                <p>{message.text}</p>
+                              <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ 
+                                table: ({node, ...props}) => <table style={tableStyles}>{props.children}</table>, 
+                              td: ({node, ...props}) => <td style={cellStyles}>{props.children}</td>, 
+                              th: ({node, ...props}) => <th style={headerStyles}>{props.children}</th> }}>
+                                {message.text}
+                              </ReactMarkdown>
                               </div>
                               {message.align === "end" && (
                                 <Avatar className="w-6 h-6">
