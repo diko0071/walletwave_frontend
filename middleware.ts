@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  const protectedRoutes = ['/dashboard', '/profile', '/settings', '/', '/chat/:path*']; 
+  const protectedRoutes = ['/dashboard', '/profile', '/settings', '/', '/chat/:path*', '/chat/new']; 
   if (protectedRoutes.includes(pathname) && (!token || !userId)) {
     const redirectUrl = new URL('/login', request.url);
     return NextResponse.redirect(redirectUrl);
@@ -36,5 +36,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/login', '/signup', '/dashboard', '/profile', '/settings', '/', '/chat/:path*'],
+  matcher: ['/login', '/signup', '/dashboard', '/profile', '/settings', '/', '/chat/:path*', '/chat/new'],
 };
+
