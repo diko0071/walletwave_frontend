@@ -156,6 +156,7 @@ export function Dashboard() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+        {data?.monthly_transactions_details.length ? (
           <ResponsiveContainer width="100%" height={350}>
             <LineChart
               data={data?.monthly_transactions_details.map((detail) => ({ name: formatDateWithDay(detail.transaction_date), spending: detail.converted_amount }))}
@@ -168,18 +169,26 @@ export function Dashboard() {
               <Line type="monotone" dataKey="spending" stroke="#0F172A" dot={true} />
             </LineChart>
           </ResponsiveContainer>
+        ) : (
+          <p className="text-sm text-muted-foreground">No data for this month.</p>
+        )}
         </CardContent>
       </Card>
-            <Card x-chunk="dashboard-01-chunk-1">
+      <Card x-chunk="dashboard-01-chunk-1">
             <CardHeader className="flex flex-col items-start space-y-2">
                 <CardTitle className="font-semibold">
                   Spend by month
                 </CardTitle>
                 <CardDescription className="text-sm text-muted-foreground">
-  This month you already spent on {data?.monthly_sum_comparison?.absolute_change ? `${Math.abs(data.monthly_sum_comparison.absolute_change)} more` : 'the same amount'} than in last month.
-      </CardDescription>
+                {data?.monthly_sum_comparison.absolute_change ? (
+                  `This month you already spent ${data?.monthly_sum_comparison?.absolute_change ? `on ${Math.abs(data.monthly_sum_comparison.absolute_change)} more` : 'the same amount'} than in last month.`
+                ) : (
+                  'Can not compare this month with last month without data.'
+                )}
+              </CardDescription>
               </CardHeader>
         <CardContent>
+        {data?.transactions_by_month.length ? (
           <ResponsiveContainer width="100%" height={350}>
           <BarChart
           data={data?.transactions_by_month.map((month) => ({ name: formatDate(month.month), spending: month.month_sum }))}
@@ -190,8 +199,11 @@ export function Dashboard() {
           <YAxis stroke="rgba(0, 0, 0, 0.5)" tick={{ fontSize: '0.7rem' }} tickLine={false} tickFormatter={(value) => value !== 0 ? value : ''} />
           <Tooltip />
           <Bar dataKey="spending" fill="#0F172A" />
-        </BarChart>
+          </BarChart>
           </ResponsiveContainer>
+        ) : (
+          <p className="text-sm text-muted-foreground">No data for this month.</p>
+        )}
         </CardContent>
       </Card>
       <Card x-chunk="dashboard-01-chunk-2">
@@ -200,10 +212,13 @@ export function Dashboard() {
                   Spend by category this month
                 </CardTitle>
                 <CardDescription className="text-sm text-muted-foreground">
-                  Your highest category in this month is {data?.top_category_current_month}.
-                </CardDescription>
+                {data?.top_category_current_month 
+                  ? `Your highest category in this month is ${data.top_category_current_month}.` 
+                  : "You don't have transactions for this month."}
+              </CardDescription>
               </CardHeader>
   <CardContent>
+    {data?.transactions_by_category.length ? (
     <ResponsiveContainer width="100%" height={350}>
       <BarChart
         layout="vertical"
@@ -217,36 +232,45 @@ export function Dashboard() {
         <Bar dataKey="value" fill="#0F172A" />
       </BarChart>
     </ResponsiveContainer>
+    ) : (
+      <p className="text-sm text-muted-foreground">No data for this month.</p>
+    )}
   </CardContent>
 </Card>
-<Card x-chunk="dashboard-01-chunk-3">
-<CardHeader className="flex flex-col items-start space-y-2">
-                <CardTitle className="font-semibold">
-                  Upcoming transactions
-                </CardTitle>
-                <CardDescription className="text-sm text-muted-foreground">
-                  The sum of your upcoming transactions this month is ${data?.total_upcoming_transactions_sum.toFixed(2)}.
-                </CardDescription>
-              </CardHeader>
-  <CardContent className="grid gap-2">
-    {data?.upcoming_recurring_transactions.map((transaction, index) => (
-      <div key={index}>
-        <div className="flex items-center gap-4">
-          <div className="grid gap-1">
-            <p className="text-sm font-medium leading-none">
-              {transaction.description}
-            </p>
-            <p className="text-xs text-gray-500 opacity-50">
-              Charge date: {transaction.next_charge_date}
-            </p>
+  <Card x-chunk="dashboard-01-chunk-3">
+  <CardHeader className="flex flex-col items-start space-y-2">
+                  <CardTitle className="font-semibold">
+                    Upcoming transactions
+                  </CardTitle>
+                  <CardDescription className="text-sm text-muted-foreground">
+                    {data?.total_upcoming_transactions_sum 
+                      ? `The sum of your upcoming transactions this month is ${data.total_upcoming_transactions_sum.toFixed(2)}.` 
+                      : "You don't have upcoming transactions."}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-2">
+    {data?.upcoming_recurring_transactions.length ? (
+      data.upcoming_recurring_transactions.map((transaction, index) => (
+        <div key={index}>
+          <div className="flex items-center gap-4">
+            <div className="grid gap-1">
+              <p className="text-sm font-medium leading-none">
+                {transaction.description}
+              </p>
+              <p className="text-xs text-gray-500 opacity-50">
+                Charge date: {transaction.next_charge_date}
+              </p>
+            </div>
+            <div className="ml-auto font-medium">{`$${transaction.amount.toFixed(2)}`}</div>
           </div>
-          <div className="ml-auto font-medium">{`$${transaction.amount.toFixed(2)}`}</div>
+          {index < data.upcoming_recurring_transactions.length - 1 && <hr className="my-2" />}
         </div>
-        {index < data?.upcoming_recurring_transactions.length - 1 && <hr className="my-2" />}
-      </div>
-    ))}
+      ))
+    ) : (
+      <p className="text-sm text-muted-foreground">No upcoming transactions.</p>
+    )}
   </CardContent>
-</Card>
+  </Card>
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-1 xl:grid-cols-1">
           <Card
