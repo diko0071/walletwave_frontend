@@ -1,6 +1,4 @@
 import Image from "next/image";
-import Playground from "./components/Playground/Playground";
-import ChatHistory from "./components/Playground/ChatHistory";
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { getAccessToken } from "./lib/actions";
 import { getUserId } from "./lib/actions";
