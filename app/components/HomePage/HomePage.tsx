@@ -1,6 +1,7 @@
 'use client';
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   Card,
   CardContent,
@@ -10,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { motion, useAnimation } from 'framer-motion';
 
 import React, { useState } from 'react';
 import { LoaderIcon, Sparkles } from "lucide-react";
@@ -18,6 +20,8 @@ import { toast } from "sonner";
 import ApiService from "@/app/services/apiService";
 
 import { RocketIcon } from "@radix-ui/react-icons"
+import { keyframes } from '@emotion/react';
+import { css } from '@emotion/react';
  
 import {
   Alert,
@@ -109,9 +113,92 @@ export default function HomePage() {
       </span>
     );
   }
+  const Coin = () => {
+    const controls = useAnimation();
+    const initialY = 0; // начальное положение по оси Y
+    const endY = 100 + Math.random() * 550; // случайное конечное положение по оси Y
+    const deviation = window.innerWidth * 0.25;
+    const initialX = (window.innerWidth / 2) - deviation + Math.random() * (2 * deviation); // случайное начальное положение по оси X
+    const endX = initialX + Math.random() * 200 - 100; // случайное конечное положение по оси X
+
+    const coinImages = ['/coin.svg', '/dollar-16.png', '/golden_bar.png']; // массив с именами файлов изображений
+    const randomImage = coinImages[Math.floor(Math.random() * coinImages.length)]; // выбираем случайное изображение
+
+    React.useEffect(() => {
+      controls.start({
+        y: [initialY, endY],
+        x: [initialX, endX],
+        rotate: [0, 360],
+        transition: { duration: 2 },
+      });
+    }, [controls]);
+  
+    return (
+      <motion.img 
+        src={randomImage} // используем случайное изображение
+        animate={controls}
+        initial={{ y: initialY, x: initialX, rotate: 0 }}
+        style={{ width: '25px', height: '25px', position: 'absolute', top: 0 }} // Установите позицию монеты здесь
+      />
+    );
+  }
+  
+  const [coins, setCoins] = useState<Array<JSX.Element>>([]);
+  
+  const startCoinAnimation = () => {
+    setCoins(prevCoins => [...prevCoins, <Coin key={prevCoins.length} />]);
+  }
+
+  const blink = keyframes`
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  `;
+
+  const controls = useAnimation();
+
+  const startShakeAnimation = () => {
+    controls.start({
+      rotate: [0, -5, 0, 5, 0],
+      transition: { duration: 0.5, loop: Infinity },
+    });
+  };
+
+  const stopShakeAnimation = () => {
+    controls.stop();
+  };
+
+
+const [isShaking, setIsShaking] = useState(false);
+
+const shakeControls = useAnimation();
+
+const hoverColors = ['#DAA520', '#9370DB'];
+
+
   return (
     <main className="p-8">
-      <h1 className="text-2xl font-semibold text-center mb-3">Write your spendings, AI will add them.</h1>
+      <h1 className="text-2xl font-semibold text-center mb-3">
+        Write your 
+        <motion.span 
+          animate={shakeControls}
+          onClick={() => {
+            shakeControls.start({
+              rotate: [0, -5, 0, 5, 0],
+              transition: { duration: 0.5, yoyo: Infinity },
+            });
+            setTimeout(() => shakeControls.stop(), 500);
+            startCoinAnimation();
+          }}
+          style={{ 
+            cursor: 'pointer', 
+            color: 'silver', 
+          }} 
+        >
+          {" spendings"}
+        </motion.span>
+        , AI sort them out.
+      </h1>
+      {coins}
       <div className="max-w-3xl mx-auto space-y-2">
         <div className="flex justify-center p-3">
           <Badge variant="outline" className="text-center font-normal">
@@ -120,7 +207,7 @@ export default function HomePage() {
         </div> 
         <div className="p-4 border rounded-md space-y-2">
           <div className="flex items-center justify-between space-x-4">
-            <input
+            <Input
               className="flex-grow bg-transparent border-none placeholder-gray-500 text-xs py-2"
               placeholder="Add your transactions..."
               type="text"
