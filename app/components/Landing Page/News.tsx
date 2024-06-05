@@ -1,7 +1,9 @@
+'use client'
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export const Newsletter = () => {
+export const News = () => {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log("Subscribed!");

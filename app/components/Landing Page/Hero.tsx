@@ -1,6 +1,6 @@
+'use client'
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
-import { HeroCards } from "./HeroCards";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 
 export const Hero = () => {
@@ -47,7 +47,6 @@ export const Hero = () => {
 
       {/* Hero cards sections */}
       <div className="z-10">
-        <HeroCards />
       </div>
 
       {/* Shadow effect */}

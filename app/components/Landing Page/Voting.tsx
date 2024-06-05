@@ -1,15 +1,11 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/XDtKGOOfic3
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
+'use client'
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Input } from "@/components/ui/input"
 
 import { ExternalLink } from "lucide-react"
 
-export default function Component() {
+export const Voting = () => {
   return (
     <div className="bg-white p-6 w-full">
       <div className="text-center space-y-4">

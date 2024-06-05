@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAccessToken } from "../lib/actions";
 import { getUserId } from "../lib/actions";
 import Header from "./Header";
+import { Navbar } from "./Landing Page/Navbar";
 
 
 const HeaderDif = async () => {
@@ -10,7 +11,8 @@ const HeaderDif = async () => {
 
     if (!userId || !token) {
         return (
-            <main className="max-w-[1500px] max-auto px-6 py-12">
+            <main>
+                <Navbar />
             </main>
         )
     }
