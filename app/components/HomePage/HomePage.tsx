@@ -149,10 +149,14 @@ export default function HomePage() {
     setCoins(prevCoins => [...prevCoins, <Coin key={prevCoins.length} />]);
   }
 
-  const blink = keyframes`
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  `;
+  const gradientAnimation = keyframes`
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+`;
 
   const controls = useAnimation();
 
@@ -167,36 +171,38 @@ export default function HomePage() {
     controls.stop();
   };
 
+  const [isShaking, setIsShaking] = useState(false);
 
-const [isShaking, setIsShaking] = useState(false);
-
-const shakeControls = useAnimation();
-
-const hoverColors = ['#DAA520', '#9370DB'];
+  const shakeControls = useAnimation();
 
 
   return (
     <main className="p-8">
       <h1 className="text-2xl font-semibold text-center mb-3">
-        Write your 
+        Write your{" "}
         <motion.span 
-          animate={shakeControls}
-          onClick={() => {
-            shakeControls.start({
-              rotate: [0, -5, 0, 5, 0],
-              transition: { duration: 0.5, yoyo: Infinity },
-            });
-            setTimeout(() => shakeControls.stop(), 500);
-            startCoinAnimation();
-          }}
-          style={{ 
-            cursor: 'pointer', 
-            color: 'silver', 
-          }} 
-        >
-          {" spendings"}
-        </motion.span>
-        , AI sort them out.
+  animate={shakeControls}
+  onClick={() => {
+    shakeControls.start({
+      rotate: [0, -5, 0, 5, 0],
+      transition: { duration: 0.5, loop: Infinity },
+    });
+    setTimeout(() => shakeControls.stop(), 500);
+    startCoinAnimation();
+  }}
+  style={{ 
+    cursor: 'pointer', 
+    display: 'inline-block',
+    background: 'linear-gradient(270deg, #000022, #000066, #000022)',
+    backgroundSize: '200% 200%',
+    color: 'transparent',
+    WebkitBackgroundClip: 'text',
+    animation: `${gradientAnimation} 6s ease infinite`
+  }} 
+>
+  spendings
+</motion.span>
+        , AI will sort them out.
       </h1>
       {coins}
       <div className="max-w-3xl mx-auto space-y-2">
