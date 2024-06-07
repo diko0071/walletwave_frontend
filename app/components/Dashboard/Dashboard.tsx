@@ -261,7 +261,7 @@ export function Dashboard() {
                 Charge date: {transaction.next_charge_date}
               </p>
             </div>
-            <div className="ml-auto font-medium">{`${transaction.currency} {transaction.amount.toFixed(2)}`}</div>
+            <div className="ml-auto font-medium">{`${transaction.currency} ${transaction.amount.toFixed(2)}`}</div>
           </div>
           {index < data.upcoming_recurring_transactions.length - 1 && <hr className="my-2" />}
         </div>
