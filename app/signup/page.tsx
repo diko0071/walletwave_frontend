@@ -64,6 +64,7 @@ export default function Signup() {
   };
 
   return (
+    <div className="w-full h-screen flex flex-col items-center justify-center">
     <Card className="mx-auto max-w-sm">
       <form>
       <CardHeader>
@@ -112,6 +113,7 @@ export default function Signup() {
       </CardContent>
       </form>
     </Card>
+    </div>
   )
 }
 

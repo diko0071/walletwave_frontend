@@ -66,7 +66,7 @@ export default function Login() {
 
 }
   return (
-    <div>
+    <div className="w-full h-screen flex flex-col items-center justify-center">
     <Card className="mx-auto max-w-sm">
       <form action={submitLogin}>
       <CardHeader>

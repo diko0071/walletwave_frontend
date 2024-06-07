@@ -6,6 +6,8 @@ import Header from "./components/Header";
 import HeaderDif from "./components/HeaderDif";
 import SidebarDif from "./components/SidebarDif";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react"
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,7 +20,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
+  return (  
     <html lang="en">
       <body className={`${inter.className}`}>
         <SidebarDif />
