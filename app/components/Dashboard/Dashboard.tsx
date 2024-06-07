@@ -245,7 +245,7 @@ export function Dashboard() {
                   <CardDescription className="text-sm text-muted-foreground">
                     {data?.total_upcoming_transactions_sum 
                       ? `The sum of your upcoming transactions this month is ${data.total_upcoming_transactions_sum.toFixed(2)}.` 
-                      : "You don't have upcoming transactions."}
+                      : "You don't have upcoming transactions this month."}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-2">
