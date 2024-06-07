@@ -88,7 +88,7 @@ export type TransactionStat = {
   total_monthly_sum: number
   monthly_transactions_details: { transaction_date: string, converted_amount: number }[]
   monthly_sum_comparison: { current_month_sum: number, previous_month_sum: number, absolute_change: number, percentage_change: number }
-  upcoming_recurring_transactions: { next_charge_date: string, amount: number, description: string }[]
+  upcoming_recurring_transactions: { next_charge_date: string, amount: number, description: string, currency: string }[]
   total_upcoming_transactions_sum: number
   transactions_by_month: { month: string, month_sum: number }[]
 }
@@ -243,9 +243,9 @@ export function Dashboard() {
                     Upcoming transactions
                   </CardTitle>
                   <CardDescription className="text-sm text-muted-foreground">
-                    {data?.total_upcoming_transactions_sum 
-                      ? `The sum of your upcoming transactions this month is ${data.total_upcoming_transactions_sum.toFixed(2)}.` 
-                      : "You don't have upcoming transactions this month."}
+                  {data?.upcoming_recurring_transactions.length 
+                  ? `You have ${data.upcoming_recurring_transactions.length} upcoming transactions.` 
+                  : "You don't have upcoming transactions this month."}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-2">
@@ -261,7 +261,7 @@ export function Dashboard() {
                 Charge date: {transaction.next_charge_date}
               </p>
             </div>
-            <div className="ml-auto font-medium">{`$${transaction.amount.toFixed(2)}`}</div>
+            <div className="ml-auto font-medium">{`${transaction.currency} {transaction.amount.toFixed(2)}`}</div>
           </div>
           {index < data.upcoming_recurring_transactions.length - 1 && <hr className="my-2" />}
         </div>
