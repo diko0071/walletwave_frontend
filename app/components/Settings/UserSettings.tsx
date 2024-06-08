@@ -78,7 +78,9 @@ export default function UserSettings() {
   const handleSaveAPIKey = () => {
     setIsLoadingAPI(true); 
     const payload = { 
-      openai_key: userData.openai_key
+      openai_key: userData.openai_key,
+      email: userData.email,
+      name: userData.name,
     };
     ApiService.put('/api/auth/user/data/update/', JSON.stringify(payload))
       .then(() => {
