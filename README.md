@@ -20,12 +20,17 @@ To get started with Wallet Wave backend, follow these simple steps:
 git clone https://github.com/diko0071/walletwave_frontend.git
 ```
 
-### 2. Build the project
+### 2. Add .env.local file 
+```
+NEXT_PUBLIC_API_URL=
+```
+
+### 3. Build the project
 ```bash
 npm run build
 ```
 
-### 3. Run the development server
+### 4. Run the development server
 ```bash
 npm run dev
 # or
