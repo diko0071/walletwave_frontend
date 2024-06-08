@@ -180,12 +180,8 @@ export function Dashboard() {
                   Spend by month
                 </CardTitle>
                 <CardDescription className="text-sm text-muted-foreground">
-                {data?.monthly_sum_comparison.absolute_change ? (
-                  `This month you already spent ${data?.monthly_sum_comparison?.absolute_change ? `on ${Math.abs(data.monthly_sum_comparison.absolute_change)} more` : 'the same amount'} than in last month.`
-                ) : (
-                  'Can not compare this month with last month without data.'
-                )}
-              </CardDescription>
+                  Comparision of your spendings across months.
+                </CardDescription>
               </CardHeader>
         <CardContent>
         {data?.transactions_by_month.length ? (
