@@ -12,10 +12,20 @@ Just kind of funny notice that 99.9% of this code was written by AI. I do know h
 
 But I think as a MVP it looks good. I mean the visualization, the tables and the chat are all good. Thanks [shadcn](https://ui.shadcn.com/) for ready-made components, [vercel v0.dev](https://v0.dev/) for AI generated components, and of course [Cursor IDE](https://cursor.sh/) for the magic.
 
-## Getting Started
+## Getting started
+To get started with Wallet Wave backend, follow these simple steps:
 
-First, run the development server:
+### 1. Clone the repository
+```bash
+git clone https://github.com/diko0071/walletwave_frontend.git
+```
 
+### 2. Build the project
+```bash
+npm run build
+```
+
+### 3. Run the development server
 ```bash
 npm run dev
 # or
