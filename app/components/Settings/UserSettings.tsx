@@ -31,24 +31,30 @@ import ApiService from "@/app/services/apiService";
 import { toast } from "sonner";
 
 export default function UserSettings() {
-  const [userData, setUserData] = useState({ name: '', email: '' });
+  const [userData, setUserData] = useState({ name: '', email: '', openai_key: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingAPI, setIsLoadingAPI] = useState(false);
+  const [showKey, setShowKey] = useState(false);
 
   useEffect(() => {
     ApiService.get('/api/auth/user/data')
       .then(data => {
-        setUserData({ name: data.name, email: data.email });
+        setUserData({ 
+          name: data.name || '', 
+          email: data.email || '', 
+          openai_key: data.openai_key || '' 
+        });
       })
       .catch(error => {
         console.error("Error fetching user data:", error);
       });
   }, []);
 
-  const handleSave = () => {
+  const handleSaveUserSettings = () => {
     setIsLoading(true); 
     const payload = { 
       name: userData.name,
-      email: userData.email
+      email: userData.email,
     };
     ApiService.put('/api/auth/user/data/update/', JSON.stringify(payload))
       .then(() => {
@@ -62,11 +68,37 @@ export default function UserSettings() {
       })
       .catch(error => {
         console.error("Error updating user data:", error);
+        console.log("Server response:", error.response);
       })
       .finally(() => {
         setIsLoading(false); 
       });
   };
+  
+  const handleSaveAPIKey = () => {
+    setIsLoadingAPI(true); 
+    const payload = { 
+      openai_key: userData.openai_key
+    };
+    ApiService.put('/api/auth/user/data/update/', JSON.stringify(payload))
+      .then(() => {
+        console.log("API key updated successfully");
+        toast(`API key has been updated successfully.`, {
+          action: {
+            label: "Close",
+            onClick: () => console.log("Notification closed"),
+          },
+        });
+      })
+      .catch(error => {
+        console.error("Error updating API key:", error);
+        console.log("Server response:", error.response);
+      })
+      .finally(() => {
+        setIsLoadingAPI(false); 
+      });
+  };
+
 
   return (
     <div className="grid gap-10">
@@ -90,12 +122,60 @@ export default function UserSettings() {
             />
           </form>
           <div className="flex justify-between mt-4">
-            <Button onClick={handleSave}>
+            <Button onClick={handleSaveUserSettings}>
               {isLoading ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
             </Button>
           </div>
         </CardContent>
       </Card>
+      <Card x-chunk="user-settings-chunk-2">
+  <CardHeader>
+    <CardTitle>API Keys</CardTitle>
+    <CardDescription>
+      Add valid OpenAI API key to use the AI features: chat and AI transaction writer.
+    </CardDescription>
+  </CardHeader>
+  <CardContent>
+    <form className="flex flex-col gap-4">
+      <div className="relative">
+        <Input
+          type={showKey ? "text" : "password"}
+          placeholder="sk-..." 
+          value={userData.openai_key} 
+          onChange={(e) => setUserData({ ...userData, openai_key: e.target.value })} 
+        />
+        <Button 
+          onClick={(e) => {e.preventDefault(); setShowKey(!showKey);}}
+          className="w-7 h-7 absolute right-10 top-1/2 transform -translate-y-1/2 text-[10px] mr-2"
+          variant="outline"
+        >
+          {showKey ? 'Hide' : 'Show'}
+        </Button>
+        <Button 
+          onClick={(e) => {
+            e.preventDefault(); 
+            navigator.clipboard.writeText(userData.openai_key);
+            toast("Copied to clipboard", {
+              action: {
+                label: "Close",
+                onClick: () => console.log("Notification closed"),
+              },
+            });
+          }}
+          className="w-7 h-7 absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ml-2 mr-2"
+          variant="outline"
+        >
+          Copy
+        </Button>
+      </div>
+    </form>
+    <div className="flex justify-between mt-4">
+      <Button onClick={handleSaveAPIKey}>
+        {isLoadingAPI ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
+      </Button>
+    </div>
+  </CardContent>
+</Card>
     </div>
   );
 }
