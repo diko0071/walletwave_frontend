@@ -114,7 +114,7 @@ interface FormattedChat {
 import { Skeleton } from "@/components/ui/skeleton"
 
 const initialMessages = [
-  { id: 1, sender: "AI", text: "Hey! I'm your Joey, your Personal Finance Assistant. How can I help you today?", time: "10:30 AM", align: "start" },
+  { id: 1, sender: "AI", text: "Hey! I'm Joey, your Personal Finance Assistant. How can I help you today?", time: "10:30 AM", align: "start" },
 ];
 
 interface ChatWithHistoryProps {
