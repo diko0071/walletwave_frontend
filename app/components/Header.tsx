@@ -76,20 +76,25 @@ export default function Header() {
       setLoading(true);
       ApiService.post_auth('/api/transactions/create/ai/', JSON.stringify({ text: inputValue }))
         .then(data => {
-
-          const processedTransactions = data.map((tx: GetTransactionsNew) => ({
-            description: tx.description, 
-            amount: tx.amount,
-            category: tx.category,
-            currency: tx.transaction_currency,
-          }));
+          if (data.error) {
+            if (data.error === "No API key provided. Please provide a valid OpenAI API key.") {
+              toast.error(data.error);
+            }
+          } else {
+            const processedTransactions = data.map((tx: GetTransactionsNew) => ({
+              description: tx.description, 
+              amount: tx.amount,
+              category: tx.category,
+              currency: tx.transaction_currency,
+            }));
     
-          showNotification('firstButton', processedTransactions.map((tx: GetTransactionsNew) => ({
-            description: tx.description, 
-            amount: tx.amount,
-            category: tx.category,
-            currency: tx.transaction_currency,
-          })));
+            showNotification('firstButton', processedTransactions.map((tx: GetTransactionsNew) => ({
+              description: tx.description, 
+              amount: tx.amount,
+              category: tx.category,
+              currency: tx.transaction_currency,
+            })));
+          }
           setLoading(false);
           setLoadingState(prevState => ({ ...prevState, firstButton: false }));
         })

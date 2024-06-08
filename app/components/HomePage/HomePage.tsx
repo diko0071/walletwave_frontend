@@ -64,20 +64,26 @@ export default function HomePage() {
       console.error("Text input is required");
       return;
     }
-
+  
     setButtonLoading(true);
     ApiService.post_auth('/api/transactions/create/ai/', JSON.stringify({ text: inputValue }))
       .then(data => {
-        data.forEach((tx: Transaction) => {
-          toast("Transaction has been created.", {
-            description: `Name: ${tx.description}, Amount: ${tx.amount}, Category: ${tx.category}, Currency: ${tx.transaction_currency}`,
-            action: {
-              label: "Close",
-              onClick: () => console.log("Notification closed"),
-            },
+        if (data.error) {
+          if (data.error === "No API key provided. Please provide a valid OpenAI API key.") {
+            toast.error(data.error);
+          }
+        } else {
+          data.forEach((tx: Transaction) => {
+            toast("Transaction has been created.", {
+              description: `Name: ${tx.description}, Amount: ${tx.amount}, Category: ${tx.category}, Currency: ${tx.transaction_currency}`,
+              action: {
+                label: "Close",
+                onClick: () => console.log("Notification closed"),
+              },
+            });
           });
-        });
-        setInputValue('');
+          setInputValue('');
+        }
       })
       .catch(error => {
         console.error('Failed to fetch transaction:', error);

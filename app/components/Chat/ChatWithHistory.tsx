@@ -231,13 +231,17 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
         };
         setMessages(prevMessages => [...prevMessages, botMessage]);
         setIsLoadingNewMessage(false);
-      } else {
-      }
+        } else if (response && response.error) {
+            if (response.error === "No API key provided. Please provide a valid OpenAI API key.") {
+                toast.error(response.error);
+            }
+        }
     } catch (error) {
+        // ... existing code ...
     } finally {
-      setIsLoadingNewMessage(false);
+        setIsLoadingNewMessage(false);
     }
-  };
+};
 
   useEffect(() => {
     const fetchChatMessages = async () => {
