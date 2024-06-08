@@ -73,7 +73,7 @@ export const Navbar = () => {
             </a>
             <a
               rel="noreferrer noopener"
-              href="https://github.com/leoMirandaa/shadcn-landing-page.git"
+              href="https://dkorzhov.notion.site/WalletWave-a2d42b3157604dce833539da26d2663f?pvs=4"
               target="_blank"
               className={`border ${buttonVariants({ variant: "secondary" })}`}
             >
