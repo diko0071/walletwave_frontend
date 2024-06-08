@@ -525,7 +525,7 @@ const headerStyles = {
       {renderChatList()}
       {renderDeleteConfirmationDialog()}
       {renderEditConfirmationDialog()}
-      <div className="mx-auto grid w-full max-w-6xl">
+      <div className="mx-auto grid w-full h-full">
         <div className="flex flex-col w-full h-full gap-3">
           <div className="flex justify-end gap-3">
             <Button variant='outline' size='icon' onClick={redirectNew}>

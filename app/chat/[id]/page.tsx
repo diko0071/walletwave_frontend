@@ -14,7 +14,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="pl-[76px] sm:pl-[57px] md:pl-[80px] lg:pl-[80px] xl:pl-[52px] 2xl:pl-[56px] mt-5 pr-[16px] sm:pr-[0px] md:pr-[30px] lg:pr-[30px] xl:pr-[0px] 2xl:pr-[0px]">
+    <div className="pl-[76px] sm:pl-[57px] md:pl-[80px] lg:pl-[80px] xl:pl-[80px] 2xl:pl-[80px] mt-5 pr-[16px] sm:pr-[0px] md:pr-[30px] lg:pr-[30px] xl:pr-[25px] 2xl:pr-[25px]">
       <ChatWithHistory chatId={id} onInvalidChatId={handleInvalidChatId} />
     </div>
   );
