@@ -64,7 +64,7 @@ export const Navbar = () => {
           <div className="flex gap-2">
             <a
               rel="noreferrer noopener"
-              href="https://github.com/leoMirandaa/shadcn-landing-page.git"
+              href="https://github.com/diko0071/walletwave_frontend"
               target="_blank"
               className={`border ${buttonVariants({ variant: "secondary" })}`}
             >
