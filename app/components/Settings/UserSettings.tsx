@@ -36,17 +36,6 @@ export default function UserSettings() {
   const [isLoadingAPI, setIsLoadingAPI] = useState(false);
   const [showKey, setShowKey] = useState(false);
 
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = "https://telegram.org/js/telegram-widget.js?7";
-    script.async = true;
-    script.setAttribute('data-telegram-login', "wallet_wave_app_bot");
-    script.setAttribute('data-size', "large");
-    script.setAttribute('data-auth-url', "https://walletwave-079e0ff9a62d.herokuapp.com/api/telegram_auth/");
-    script.setAttribute('data-request-access', "write");
-    document.body.appendChild(script);
-  }, []);
-
 
   useEffect(() => {
     ApiService.get('/api/auth/user/data')
