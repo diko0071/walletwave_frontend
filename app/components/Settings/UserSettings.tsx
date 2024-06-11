@@ -1,11 +1,17 @@
 'use client';
 import React, { useState, useEffect } from 'react'; // Import useState and useEffect
 import Link from "next/link";
-import { CircleUser, Menu, Package2, Search } from "lucide-react";
+import { CircleUser, CircleHelp, Menu, Package2, Search } from "lucide-react";
 
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table";
 import { ReloadIcon } from "@radix-ui/react-icons"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,10 +37,12 @@ import ApiService from "@/app/services/apiService";
 import { toast } from "sonner";
 
 export default function UserSettings() {
-  const [userData, setUserData] = useState({ name: '', email: '', openai_key: '' });
+  const [userData, setUserData] = useState({ name: '', email: '', openai_key: '', telegram_user_id: '' });
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingAPI, setIsLoadingAPI] = useState(false);
+  const [isLoadingCredentials, setIsLoadingCredentials] = useState(false);
   const [showKey, setShowKey] = useState(false);
+  const [telegramID, setTelegramID] = useState('');
+  const [isLoadingTelegramID, setIsLoadingTelegramID] = useState(false);
 
 
   useEffect(() => {
@@ -43,7 +51,8 @@ export default function UserSettings() {
         setUserData({ 
           name: data.name || '', 
           email: data.email || '', 
-          openai_key: data.openai_key || '' 
+          openai_key: data.openai_key || '', 
+          telegram_user_id: data.telegram_user_id || ''
         });
       })
       .catch(error => {
@@ -77,16 +86,17 @@ export default function UserSettings() {
   };
   
   const handleSaveAPIKey = () => {
-    setIsLoadingAPI(true); 
+    setIsLoadingCredentials(true); 
     const payload = { 
       openai_key: userData.openai_key,
+      telegram_user_id: userData.telegram_user_id,
       email: userData.email,
       name: userData.name,
     };
     ApiService.put('/api/auth/user/data/update/', JSON.stringify(payload))
       .then(() => {
-        console.log("API key updated successfully");
-        toast(`API key has been updated successfully.`, {
+        console.log("Credentials updated successfully");
+        toast(`Credentials have been updated successfully.`, {
           action: {
             label: "Close",
             onClick: () => console.log("Notification closed"),
@@ -94,11 +104,11 @@ export default function UserSettings() {
         });
       })
       .catch(error => {
-        console.error("Error updating API key:", error);
+        console.error("Error updating credentials:", error);
         console.log("Server response:", error.response);
       })
       .finally(() => {
-        setIsLoadingAPI(false); 
+        setIsLoadingCredentials(false); 
       });
   };
 
@@ -132,10 +142,23 @@ export default function UserSettings() {
         </CardContent>
       </Card>
       <Card x-chunk="user-settings-chunk-2">
-  <CardHeader>
-    <CardTitle>API Keys</CardTitle>
+    <CardHeader>
+    <CardTitle className='mb-2'>Credentials</CardTitle>
+    <div className="flex items-center mt-5">
+      <CardTitle className="text-lg">OpenAI</CardTitle>
+      <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="ml-1.5">
+              <CircleHelp className="w-3 h-3"/>
+            </TooltipTrigger>
+            <TooltipContent>
+  <p>To find OpenAI API Key, please <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-blue-500">follow the link</a>.</p>
+</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
     <CardDescription>
-      Add valid OpenAI API key to use the AI features: chat and AI transaction writer.
+    Add valid OpenAI API key to use the AI features: Chat and AI Transaction Writer.
     </CardDescription>
   </CardHeader>
   <CardContent>
@@ -172,13 +195,40 @@ export default function UserSettings() {
         </Button>
       </div>
     </form>
-    <div className="flex justify-between mt-4">
+    <div className="flex justify-between">
+  </div>
+  <div className="flex items-center mt-5">
+  <CardTitle className="text-lg">Telegram User ID</CardTitle>
+  <TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger className="ml-1.5">
+        <CircleHelp className="w-3 h-3"/>
+      </TooltipTrigger>
+      <TooltipContent>
+  <p>You can find your Telegram User ID by asking the <a href="https://t.me/myidbot" target="_blank" rel="noopener noreferrer" className="text-blue-500">@myidbot</a> in Telegram.</p>
+</TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
+</div>
+<CardDescription className='mt-1.5'>
+  Add your Telegram User ID to record transactions in Telegram.
+</CardDescription>
+<form className="flex flex-col gap-4 mt-6">
+  <div className="relative">
+    <Input
+      placeholder="3345..." 
+      value={userData.telegram_user_id} 
+      onChange={(e) => setUserData({ ...userData, telegram_user_id: e.target.value })} 
+    />
+  </div>
+</form>
+<div className="flex justify-between mt-4">
       <Button onClick={handleSaveAPIKey}>
-        {isLoadingAPI ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
+        {isLoadingCredentials ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
       </Button>
     </div>
-  </CardContent>
+</CardContent>
 </Card>
-    </div>
-  );
+</div>
+);
 }
