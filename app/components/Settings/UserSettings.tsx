@@ -211,7 +211,7 @@ export default function UserSettings() {
   </TooltipProvider>
 </div>
 <CardDescription className='mt-1.5'>
-  Add your Telegram User ID to record transactions in Telegram.
+  Add your Telegram User ID to record transactions from Telegram.
 </CardDescription>
 <form className="flex flex-col gap-4 mt-6">
   <div className="relative">
