@@ -32,6 +32,7 @@ export type GetTransactionsNew = {
   description: string;
   id: number;
   transaction_currency: string;
+  transaction_date: string;
 }
 
 function processApiData(apiResponse: any[]): GetTransactionsNew[] {
@@ -41,7 +42,7 @@ function processApiData(apiResponse: any[]): GetTransactionsNew[] {
     description: tx.description,
     id: tx.id,
     transaction_currency: tx.transaction_currency,
-    
+    transaction_date: tx.transaction_date,
   }));
 }
   
@@ -63,6 +64,7 @@ export default function Header() {
         category: tx.category,
         currency: tx.currency,
         description: tx.description,
+        transaction_date: tx.transaction_date,
       }));
     }
 
@@ -86,6 +88,7 @@ export default function Header() {
               amount: tx.amount,
               category: tx.category,
               currency: tx.transaction_currency,
+              transaction_date: tx.transaction_date,
             }));
     
             showNotification('firstButton', processedTransactions.map((tx: GetTransactionsNew) => ({
@@ -93,6 +96,7 @@ export default function Header() {
               amount: tx.amount,
               category: tx.category,
               currency: tx.transaction_currency,
+              transaction_date: tx.transaction_date,
             })));
           }
           setLoading(false);
@@ -131,6 +135,7 @@ export default function Header() {
             amount: tx.amount,
             category: tx.category,
             currency: tx.transaction_currency,
+            transaction_date: tx.transaction_date,
           }));
     
           showNotification('secondButton', processedTransactions);
@@ -167,7 +172,7 @@ export default function Header() {
         event.target.value = value;
     };
 
-    const showNotification = async (buttonKey: 'firstButton' | 'secondButton', transactions: Array<{description: string, amount: number, category: string, currency: string}>) => {
+    const showNotification = async (buttonKey: 'firstButton' | 'secondButton', transactions: Array<{description: string, amount: number, category: string, currency: string, transaction_date: string}>) => {
       setLoadingState(prevState => ({ ...prevState, [buttonKey]: true }));
       transactions.forEach(transaction => {
         toast("Transaction has been created.", {

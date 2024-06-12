@@ -34,6 +34,7 @@ interface Transaction {
   amount: number;
   category: string;
   transaction_currency: string;
+  transaction_date: string;
 }
 
 export type TransactionStat = {
