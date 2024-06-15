@@ -158,7 +158,7 @@ export function Dashboard() {
           <CardDescription className="text-sm text-muted-foreground">
           You spent {data?.monthly_sum ? data.monthly_sum.toFixed(2) : '0.00'} this month. 
           {data?.monthly_budget !== 0 && (
-            data?.monthly_sum && data?.current_month_left && data?.monthly_sum < data?.current_month_left 
+            data?.monthly_sum && data?.monthly_budget && data?.monthly_sum <= data?.monthly_budget 
               ? ` You have ${data?.current_month_left ? data.current_month_left.toFixed(2) : '0.00'} left for this month.`
               : ` You overspent by ${data?.current_month_left ? Math.abs(data.current_month_left).toFixed(2) : '0.00'} this month.`
           )}
