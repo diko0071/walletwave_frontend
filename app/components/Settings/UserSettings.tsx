@@ -145,7 +145,7 @@ export default function UserSettings() {
     <CardHeader>
     <CardTitle className='mb-2'>Credentials</CardTitle>
     <div className="flex items-center mt-5">
-      <CardTitle className="text-lg">OpenAI API Key</CardTitle>
+      <CardTitle className="text-lg">OpenAI API</CardTitle>
       <TooltipProvider>
           <Tooltip>
             <TooltipTrigger className="ml-1.5">
