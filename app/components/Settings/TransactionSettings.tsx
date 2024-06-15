@@ -104,7 +104,7 @@ import React, { useState, useEffect } from 'react';
   export default function TransactionSettings() {
 
     const [currentTransactions, setCurrentTransactions] = useState<Transaction[]>([]);
-    const [userSettings, setUserSettings] = useState({ currency: '', email: '' });
+    const [userSettings, setUserSettings] = useState({ currency: '', email: '', monthly_budget: 0 });
 
 
     useEffect(() => {
@@ -128,7 +128,7 @@ import React, { useState, useEffect } from 'react';
         .then(response => {
           console.log("API Response:", response);
 
-          setUserSettings({ currency: response.currency, email: response.email }); 
+          setUserSettings({ currency: response.currency, email: response.email, monthly_budget: response.monthly_budget }); 
           setIsLoading(false); 
         })
         .catch(error => {
@@ -157,6 +157,31 @@ import React, { useState, useEffect } from 'react';
         })
         .finally(() => {
           setIsLoadingSaveCurrency(false);
+        });
+    };
+
+    const [isLoadingSaveMonthlyBudget, setIsLoadingSaveMonthlyBudget] = useState(false);
+
+    const handleSaveMonthlyBudgetChange = () => {
+      setIsLoadingSaveMonthlyBudget(true);
+      const payload = {
+        email: userSettings.email,
+        monthly_budget: parseFloat(monthlyBudget.replace(/,/g, '')),
+      };
+      ApiService.put('/api/auth/user/data/update/', JSON.stringify(payload))
+        .then(() => {
+          toast("Monthly budget updated successfully.", {
+            action: {
+              label: "Close",
+              onClick: () => console.log("Notification closed"),
+            },
+          });
+        })
+        .catch(error => {
+          console.error("Error updating monthly budget:", error);
+        })
+        .finally(() => {
+          setIsLoadingSaveMonthlyBudget(false);
         });
     };
 
@@ -394,6 +419,19 @@ import React, { useState, useEffect } from 'react';
       }
     };
 
+    const [monthlyBudget, setMonthlyBudget] = useState('');
+
+    const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      if (value === '') {
+        setMonthlyBudget('');
+      } else {
+        const numberValue = parseFloat(value.replace(/,/g, ''));
+        if (!isNaN(numberValue)) {
+          setMonthlyBudget(new Intl.NumberFormat().format(numberValue));
+        }
+      }
+    };
     const renderDeleteConfirmationDialog = () => (
         <AlertDialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
           <AlertDialogTrigger asChild>
@@ -562,6 +600,24 @@ import React, { useState, useEffect } from 'react';
                 <div className="flex justify-between mt-4">
                 <Button onClick={handleSaveCurrencyChange}>
                     {isLoadingSaveCurrency ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            <Card x-chunk="transaction-settings-chunk-1">
+              <CardHeader>
+                <CardTitle>Monthly Budget</CardTitle>
+                <CardDescription>
+                  Set your monthly budget.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex">
+                  <Input type="text" value={monthlyBudget} onChange={handleBudgetChange} />
+                </div>
+                <div className="flex justify-between mt-4">
+                  <Button onClick={handleSaveMonthlyBudgetChange}>
+                    {isLoadingSaveMonthlyBudget ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}
                   </Button>
                 </div>
               </CardContent>
