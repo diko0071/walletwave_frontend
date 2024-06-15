@@ -166,7 +166,7 @@ import React, { useState, useEffect } from 'react';
       setIsLoadingSaveMonthlyBudget(true);
       const payload = {
         email: userSettings.email,
-        monthly_budget: parseFloat(monthlyBudget.replace(/,/g, '')),
+        monthly_budget: userSettings.monthly_budget,
       };
       ApiService.put('/api/auth/user/data/update/', JSON.stringify(payload))
         .then(() => {
@@ -419,19 +419,6 @@ import React, { useState, useEffect } from 'react';
       }
     };
 
-    const [monthlyBudget, setMonthlyBudget] = useState('');
-
-    const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      if (value === '') {
-        setMonthlyBudget('');
-      } else {
-        const numberValue = parseFloat(value.replace(/,/g, ''));
-        if (!isNaN(numberValue)) {
-          setMonthlyBudget(new Intl.NumberFormat().format(numberValue));
-        }
-      }
-    };
     const renderDeleteConfirmationDialog = () => (
         <AlertDialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
           <AlertDialogTrigger asChild>
@@ -612,9 +599,20 @@ import React, { useState, useEffect } from 'react';
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex">
-                  <Input type="text" value={monthlyBudget} onChange={handleBudgetChange} />
-                </div>
+                <Input 
+                  type="text" 
+                  value={userSettings.monthly_budget} 
+                  onChange={(e) => {
+                        if (e.target.value === '') {
+                          setUserSettings({ ...userSettings, monthly_budget: 0 });
+                        } else {
+                          const numberValue = parseFloat(e.target.value);
+                          if (!isNaN(numberValue)) {
+                            setUserSettings({ ...userSettings, monthly_budget: numberValue });
+                          }
+                        }
+                    }} 
+                  />
                 <div className="flex justify-between mt-4">
                   <Button onClick={handleSaveMonthlyBudgetChange}>
                     {isLoadingSaveMonthlyBudget ? <ReloadIcon className="w-4 h-4 animate-spin"/> : 'Save'}

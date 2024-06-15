@@ -91,6 +91,7 @@ export type TransactionStat = {
   upcoming_recurring_transactions: { next_charge_date: string, amount: number, description: string, currency: string }[]
   total_upcoming_transactions_sum: number
   transactions_by_month: { month: string, month_sum: number }[]
+  current_month_left: number
 }
 
 function processApiData(apiResponse: any): TransactionStat {
@@ -108,7 +109,8 @@ function processApiData(apiResponse: any): TransactionStat {
     monthly_sum_comparison: apiResponse.monthly_sum_comparison,
     upcoming_recurring_transactions: apiResponse.upcoming_recurring_transactions,
     total_upcoming_transactions_sum: apiResponse.total_upcoming_transactions_sum,
-    transactions_by_month: apiResponse.transactions_by_month
+    transactions_by_month: apiResponse.transactions_by_month,
+    current_month_left: apiResponse.current_month_left
   };
 }
 
@@ -152,7 +154,10 @@ export function Dashboard() {
             Spend this month
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground">
-            You spent {data?.monthly_sum ? data.monthly_sum.toFixed(2) : '0.00'} this month.
+          You spent {data?.monthly_sum ? data.monthly_sum.toFixed(2) : '0.00'} this month. 
+          {data?.monthly_sum && data?.current_month_left && data?.monthly_sum < data?.current_month_left 
+            ? ` You have ${data?.current_month_left ? data.current_month_left.toFixed(2) : '0.00'} left for this month.`
+            : ` You overspent by ${data?.current_month_left ? Math.abs(data.current_month_left).toFixed(2) : '0.00'} this month.`}
           </CardDescription>
         </CardHeader>
         <CardContent>
