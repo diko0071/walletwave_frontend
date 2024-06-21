@@ -254,28 +254,28 @@ export function Dashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-2">
-    {data?.upcoming_recurring_transactions.length ? (
-      data.upcoming_recurring_transactions.map((transaction, index) => (
-        <div key={index}>
-          <div className="flex items-center gap-4">
-            <div className="grid gap-1">
-              <p className="text-sm font-medium leading-none">
-                {transaction.description}
-              </p>
-              <p className="text-xs text-gray-500 opacity-50">
-                Charge date: {transaction.next_charge_date}
-              </p>
-            </div>
-            <div className="ml-auto font-medium">{`${transaction.currency} ${transaction.amount.toFixed(2)}`}</div>
-          </div>
-          {index < data.upcoming_recurring_transactions.length - 1 && <hr className="my-2" />}
+{data?.upcoming_recurring_transactions.length ? (
+  [...data.upcoming_recurring_transactions].sort((a, b) => new Date(a.next_charge_date).getTime() - new Date(b.next_charge_date).getTime()).map((transaction, index) => (
+    <div key={index}>
+      <div className="flex items-center gap-4">
+        <div className="grid gap-1">
+          <p className="text-sm font-medium leading-none">
+            {transaction.description}
+          </p>
+          <p className="text-xs text-gray-500 opacity-50">
+            Charge date: {transaction.next_charge_date}
+          </p>
         </div>
-      ))
-    ) : (
-      <p className="text-sm text-muted-foreground">No upcoming transactions.</p>
-    )}
-  </CardContent>
-  </Card>
+        <div className="ml-auto font-medium">{`${transaction.currency} ${transaction.amount.toFixed(2)}`}</div>
+      </div>
+      {index < data.upcoming_recurring_transactions.length - 1 && <hr className="my-2" />}
+    </div>
+  ))
+) : (
+  <p className="text-sm text-muted-foreground">No upcoming transactions.</p>
+)}
+</CardContent>
+</Card>
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-1 xl:grid-cols-1">
           <Card
