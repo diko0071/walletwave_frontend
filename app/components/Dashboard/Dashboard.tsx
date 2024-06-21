@@ -245,7 +245,7 @@ export function Dashboard() {
   <Card x-chunk="dashboard-01-chunk-3">
   <CardHeader className="flex flex-col items-start space-y-2">
                   <CardTitle className="font-semibold">
-                    Upcoming transactions
+                    Upcoming reccuring transactions
                   </CardTitle>
                   <CardDescription className="text-sm text-muted-foreground">
                   {data?.upcoming_recurring_transactions.length 
@@ -285,7 +285,7 @@ export function Dashboard() {
             <div>
               <CardTitle className="mb-2">All Transactions</CardTitle>
               <CardDescription>
-                Recent transactions from your wallet.
+                List of all transactions from your wallet.
               </CardDescription>
             </div>
             </CardHeader>
