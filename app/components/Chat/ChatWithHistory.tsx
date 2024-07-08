@@ -318,7 +318,7 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
         <SheetHeader>
           <SheetTitle>Chats History</SheetTitle>
         </SheetHeader>
-        <div className="grid gap-3 py-4 overflow-auto max-h-[150vh]"> 
+        <div className="grid gap-3 py-4 overflow-auto max-h-[85vh]"> 
           {chatList && chatList.length > 0 ? (
             chatList.map((chat) => (
               <Link className="grid w-full" href={`/chat/${chat.id}`}> 
@@ -334,7 +334,6 @@ export default function ChatWithHistory({ chatId, onInvalidChatId }: ChatWithHis
         </div>
         <SheetFooter>
           <SheetClose asChild>
-            <Button>Close</Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>
