@@ -52,12 +52,11 @@ export default function Login() {
   }, [router]);
 
   const submitLogin = async () => {
-    setLoading(true);
     const formData = {
       email: email,
       password: password,
     }
-
+  setLoading(true);
   const response = await ApiService.post('/api/auth/login/', JSON.stringify(formData));
   if (response.access) {
     handleLogin(response.user.pk, response.access, response.refresh).then(() => {
