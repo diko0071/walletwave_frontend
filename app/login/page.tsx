@@ -29,6 +29,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function checkAndRefreshToken() {
@@ -50,6 +51,7 @@ export default function Login() {
   }, [router]);
 
   const submitLogin = async () => {
+    setLoading(true);
     const formData = {
       email: email,
       password: password,
@@ -63,7 +65,7 @@ export default function Login() {
   } else {
     setError(response.non_field_errors);
   }
-
+  setLoading(false);
 }
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center">
@@ -101,8 +103,8 @@ export default function Login() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ))}
-          <Button type="submit" className="w-full">
-            Login
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Loading...' : 'Login'}
           </Button>
         </div>
       </CardContent>
