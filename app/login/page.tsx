@@ -20,6 +20,7 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
+import { LoaderCircle } from "lucide-react"
 import { useEffect } from "react";
 import { getRefreshToken, handleRefresh } from "../lib/actions";
 
@@ -104,7 +105,7 @@ export default function Login() {
             </Alert>
           ))}
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Loading...' : 'Login'}
+            {loading ? <LoaderCircle className="animate-spin" /> : 'Login'}
           </Button>
         </div>
       </CardContent>
